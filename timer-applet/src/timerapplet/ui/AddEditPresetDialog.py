@@ -14,8 +14,8 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
-import gtk
-import gtk.glade as glade
+from gi.repository import Gtk
+import Gtk.glade as glade
 from DurationChooser import DurationChooser
 
 class AddEditPresetDialog(object):
@@ -30,15 +30,15 @@ class AddEditPresetDialog(object):
         self._cancel_button = glade_widgets.get_widget('cancel_button')
         self._name_entry = glade_widgets.get_widget('name_entry')
         duration_chooser_container = glade_widgets.get_widget('duration_chooser_container')
-        self._duration_chooser = DurationChooser(gtk.SizeGroup(gtk.SIZE_GROUP_HORIZONTAL))
+        self._duration_chooser = DurationChooser(Gtk.SizeGroup(Gtk.SizeGroupMode.HORIZONTAL))
         self._command_entry = glade_widgets.get_widget('command_entry')
         self._next_timer_entry = glade_widgets.get_widget('next_timer_entry')
         self._auto_start_check = glade_widgets.get_widget('auto_start_check')
         
-        duration_chooser_container.pack_start(self._duration_chooser)
+        duration_chooser_container.pack_start(self._duration_chooser, True, True, 0)
         
         self._dialog.set_title(title)
-        self._dialog.set_default_response(gtk.RESPONSE_OK)
+        self._dialog.set_default_response(Gtk.ResponseType.OK)
         self._name_entry.set_text(name)
         self._command_entry.set_text(command)
         self._duration_chooser.set_duration(hours, minutes, seconds)
@@ -64,7 +64,7 @@ class AddEditPresetDialog(object):
         self._check_for_valid_save_preset_input()
         result = self._dialog.run()
         self._dialog.hide()
-        if result == gtk.RESPONSE_OK:
+        if result == Gtk.ResponseType.OK:
             (hours, minutes, seconds) = self._duration_chooser.get_duration()
             cmd = self._command_entry.get_text()
             next_timer = self._next_timer_entry.get_text()

@@ -15,14 +15,14 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 import math
-import gobject
-import gtk
+from gi.repository import GObject
+from gi.repository import Gtk
 
-class PieMeter(gtk.Image):
+class PieMeter(Gtk.Image):
     _DEFAULT_SIZE = 24
 
     def __init__(self):
-        gtk.Image.__init__(self)
+        GObject.GObject.__init__(self)
         self._progress = 0.0
         self._fill_color = (0.0, 1.0, 0.0)
         
@@ -73,5 +73,5 @@ class PieMeter(gtk.Image):
         context.set_line_width(1.0)
         context.stroke()
 
-gobject.type_register(PieMeter)
+GObject.type_register(PieMeter)
 

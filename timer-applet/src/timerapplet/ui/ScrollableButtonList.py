@@ -14,7 +14,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
-import gtk
+from gi.repository import Gtk
 
 def get_scroll_value_to_reveal_widget(widget_rect, viewport_rect, scroll_val):
     if widget_rect.y < scroll_val:
@@ -23,17 +23,17 @@ def get_scroll_value_to_reveal_widget(widget_rect, viewport_rect, scroll_val):
         scroll_val = widget_rect.y + widget_rect.height + 1 - viewport_rect.height    
     return scroll_val
 
-class ScrollableButtonList(gtk.ScrolledWindow):
+class ScrollableButtonList(Gtk.ScrolledWindow):
     def __init__(self):
-        gtk.ScrolledWindow.__init__(self)
+        GObject.GObject.__init__(self)
         
-        self._vadjust = gtk.Adjustment()
-        self._vbox = gtk.VBox()
-        self._viewport = gtk.Viewport()
+        self._vadjust = Gtk.Adjustment()
+        self._vbox = Gtk.VBox()
+        self._viewport = Gtk.Viewport()
         
         self.set_vadjustment(self._vadjust)
-        self.set_policy(gtk.POLICY_NEVER, gtk.POLICY_AUTOMATIC)
-        self._viewport.modify_bg(gtk.STATE_NORMAL, self.style.base[gtk.STATE_NORMAL])
+        self.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
+        self._viewport.modify_bg(Gtk.StateType.NORMAL, self.style.base[Gtk.StateType.NORMAL])
         
         self._viewport.add(self._vbox)
         self.add(self._viewport)

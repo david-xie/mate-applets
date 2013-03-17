@@ -18,11 +18,11 @@
 from gettext import gettext as _
 from gettext import ngettext
 from datetime import datetime, timedelta
-import mateapplet
+from gi.repository import MatePanelApplet
 import gst
-import gtk
-import gtk.glade as glade
-import gtk.gdk as gdk
+from gi.repository import Gtk
+import Gtk.glade as glade
+import Gtk.gdk as gdk
 import subprocess
 import shlex
 import threading
@@ -37,7 +37,7 @@ def on_widget_button_press_event(sender, event, data=None):
     return False
 
 def force_no_focus_padding(widget):
-    gtk.rc_parse_string('\n'
+    Gtk.rc_parse_string('\n'
                         '   style "timer-applet-button-style"\n'
                         '   {\n'
                         '      GtkWidget::focus-line-width=0\n'
@@ -81,7 +81,7 @@ class TimerApplet(object):
         self._gst_playbin.get_bus().add_watch(bus_event)
         
         self._status_button = ui.StatusButton()
-        self._notifier = ui.Notifier('TimerApplet', gtk.STOCK_DIALOG_INFO, self._status_button)
+        self._notifier = ui.Notifier('TimerApplet', Gtk.STOCK_DIALOG_INFO, self._status_button)
         self._start_next_timer_dialog = ui.StartNextTimerDialog(
             config.GLADE_PATH,
             "Start next timer",
@@ -126,7 +126,7 @@ class TimerApplet(object):
         # and right-clicks to the applet.
         self._status_button.connect('button-press-event', on_widget_button_press_event)
         
-        self._status_button.set_relief(gtk.RELIEF_NONE)
+        self._status_button.set_relief(Gtk.ReliefStyle.NONE)
         self._status_button.set_icon(config.ICON_PATH);
        
         self._applet.set_tooltip_text(_("Timer Applet"))
@@ -173,7 +173,7 @@ class TimerApplet(object):
         self._preferences_dialog.connect('show-pulsing-icon-changed', self._on_prefs_show_pulsing_icon_changed)
         self._preferences_dialog.connect('custom-sound-path-changed', self._on_prefs_custom_sound_path_changed)
         
-        self._about_dialog.connect('delete-event', gtk.Widget.hide_on_delete)
+        self._about_dialog.connect('delete-event', Gtk.Widget.hide_on_delete)
         self._about_dialog.connect('response', lambda dialog, response_id: self._about_dialog.hide())
 
         self._mateconf.add_notification(TimerApplet._SHOW_REMAINING_TIME_KEY, self._on_mateconf_changed)
@@ -220,7 +220,7 @@ class TimerApplet(object):
             self._status_button.set_pie_fill_color(0.4, 0.4, 0.4)
         else:
             # Use theme color
-            color = self._applet.style.base[gtk.STATE_SELECTED]
+            color = self._applet.style.base[Gtk.StateType.SELECTED]
             red = color.red / 65535.0
             green = color.green / 65535.0
             blue = color.blue / 65535.0
@@ -308,16 +308,16 @@ class TimerApplet(object):
     
     def _on_applet_change_background(self, applet, background_type, color, pixmap):
         applet.set_style(None)
-        rc_style = gtk.RcStyle()
+        rc_style = Gtk.RcStyle()
         applet.modify_style(rc_style)
         
         if background_type == mateapplet.NO_BACKGROUND:
             pass
         elif background_type == mateapplet.COLOR_BACKGROUND:
-            applet.modify_bg(gtk.STATE_NORMAL, color)
+            applet.modify_bg(Gtk.StateType.NORMAL, color)
         elif background_type == mateapplet.PIXMAP_BACKGROUND:
             style = applet.style.copy()
-            style.bg_pixmap[gtk.STATE_NORMAL] = pixmap
+            style.bg_pixmap[Gtk.StateType.NORMAL] = pixmap
             applet.set_style(style)
     
     def _on_applet_destroy(self, sender, data=None):

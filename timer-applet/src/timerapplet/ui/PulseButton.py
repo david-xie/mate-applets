@@ -16,10 +16,10 @@
 
 import math
 import time
-import gobject
-import gtk
+from gi.repository import GObject
+from gi.repository import Gtk
 
-class PulseButton(gtk.Button):
+class PulseButton(Gtk.Button):
     def __init__(self):
         super(PulseButton, self).__init__()
         
@@ -29,7 +29,7 @@ class PulseButton(gtk.Button):
         
     def start_pulsing(self):
         self._start_time = time.time()
-        gobject.timeout_add(10, self._on_timeout)
+        GObject.timeout_add(10, self._on_timeout)
         
     def stop_pulsing(self):
         self._start_time = 0
@@ -50,14 +50,14 @@ class PulseButton(gtk.Button):
         return True
     
     def do_expose_event(self, event):
-        gtk.Button.do_expose_event(self, event)
+        Gtk.Button.do_expose_event(self, event)
         if self._start_time > 0:
             context = event.window.cairo_create()
             context.rectangle(0, 0, self.allocation.width, self.allocation.height)
             
-            #color = self.style.bg[gtk.STATE_SELECTED]
-            #color = gtk.gdk.Color(65535, 65535, 65535)
-            color = gtk.gdk.Color(0, 0, 0)
+            #color = self.style.bg[Gtk.StateType.SELECTED]
+            #color = Gdk.Color(65535, 65535, 65535)
+            color = Gdk.Color(0, 0, 0)
             red = color.red / 65535.0
             green = color.green / 65535.0
             blue = color.blue / 65535.0
@@ -66,4 +66,4 @@ class PulseButton(gtk.Button):
         
         return False
 
-gobject.type_register(PulseButton)
+GObject.type_register(PulseButton)

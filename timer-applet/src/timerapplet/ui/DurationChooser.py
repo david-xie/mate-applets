@@ -16,17 +16,17 @@
 
 from gettext import gettext as _
 import math
-import gobject
-import gtk
+from gi.repository import GObject
+from gi.repository import Gtk
 
-class DurationChooser(gtk.VBox):
-    __gsignals__ = {'duration-changed': (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, ())}
+class DurationChooser(Gtk.VBox):
+    __gsignals__ = {'duration-changed': (GObject.SignalFlags.RUN_LAST, None, ())}
     MAX_HOURS = 48
     MAX_MINUTES = 999
     MAX_SECONDS = 999
 
     def __init__(self, size_group):
-        gtk.VBox.__init__(self, False, 6)
+        GObject.GObject.__init__(self, False, 6)
         
         self._hours_spin = self._add_row(_('_Hours:'),
                                          size_group,
@@ -128,18 +128,18 @@ class DurationChooser(gtk.VBox):
         self._hours_spin.grab_focus()
         
     def _add_row(self, row_label_str, size_group, max_spin_val):
-        row_hbox = gtk.HBox(False, 6)
+        row_hbox = Gtk.HBox(False, 6)
         
-        label = gtk.Label(row_label_str)
+        label = Gtk.Label(label=row_label_str)
         label.set_property('xalign', 0.0)
         label.set_property('use-underline', True)
         size_group.add_widget(label)
         
-        spin_adj = gtk.Adjustment(0, 0, max_spin_val, 1, 1, 0)
-        spin_button = gtk.SpinButton(spin_adj, 1.0, 0)
+        spin_adj = Gtk.Adjustment(0, 0, max_spin_val, 1, 1, 0)
+        spin_button = Gtk.SpinButton(spin_adj, 1.0, 0)
         spin_button.props.activates_default = True
         spin_button.props.numeric = False
-        spin_button.props.update_policy = gtk.UPDATE_IF_VALID
+        spin_button.props.update_policy = Gtk.UPDATE_IF_VALID
         
         label.set_mnemonic_widget(spin_button)
         

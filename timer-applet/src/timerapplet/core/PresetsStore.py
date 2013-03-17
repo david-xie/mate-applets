@@ -22,8 +22,8 @@ except:
 
 import os
 from os import path
-import gobject
-import gtk
+from gi.repository import GObject
+from gi.repository import Gtk
 import timerapplet.utils as utils
 
 from timerapplet.utils import (serialize_bool,
@@ -32,15 +32,15 @@ from timerapplet.utils import (serialize_bool,
                                hms_to_seconds)
 from timerapplet.defs import VERSION
 
-class PersistentStore(gtk.ListStore):
+class PersistentStore(Gtk.ListStore):
     def __init__(self, load_func, save_func, *args):
-        gtk.ListStore.__init__(self, *args)
+        GObject.GObject.__init__(self, *args)
         load_func(self)
         
         self.connect('row-deleted', lambda model, row_path: save_func(self))
         self.connect('row-changed', lambda model, row_path, row_iter: save_func(self))
 
-class PresetsStore(gobject.GObject):
+class PresetsStore(GObject.GObject):
     (_NAME_COL,
      _HOURS_COL,
      _MINUTES_COL,
@@ -53,13 +53,13 @@ class PresetsStore(gobject.GObject):
         object.__init__(self)
         self._model = PersistentStore(lambda model: PresetsStore._load_presets(model, filename),
                                       lambda model: PresetsStore._save_presets(model, filename),
-                                      gobject.TYPE_STRING,
-                                      gobject.TYPE_INT,
-                                      gobject.TYPE_INT,
-                                      gobject.TYPE_INT,
-                                      gobject.TYPE_STRING,
-                                      gobject.TYPE_STRING,
-                                      gobject.TYPE_BOOLEAN,
+                                      GObject.TYPE_STRING,
+                                      GObject.TYPE_INT,
+                                      GObject.TYPE_INT,
+                                      GObject.TYPE_INT,
+                                      GObject.TYPE_STRING,
+                                      GObject.TYPE_STRING,
+                                      GObject.TYPE_BOOLEAN,
                                      )
         
     def get_model(self):

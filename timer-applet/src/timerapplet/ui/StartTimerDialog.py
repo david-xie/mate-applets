@@ -15,11 +15,11 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
-import gobject
-import gtk
-import gtk.glade as glade
-import gtk.gdk as gdk
-import pango
+from gi.repository import GObject
+from gi.repository import Gtk
+import Gtk.glade as glade
+import Gtk.gdk as gdk
+from gi.repository import Pango
 
 from gettext import gettext as _
 from shlex import split as shell_tokenize
@@ -28,41 +28,41 @@ from subprocess import check_call, CalledProcessError
 from DurationChooser import DurationChooser
 from ScrollableButtonList import ScrollableButtonList
 
-class StartTimerDialog(gobject.GObject):
+class StartTimerDialog(GObject.GObject):
     __gsignals__ = {'clicked-start':
-                        (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, ()),
+                        (GObject.SignalFlags.RUN_LAST, None, ()),
                     'clicked-cancel':
-                        (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, ()),
+                        (GObject.SignalFlags.RUN_LAST, None, ()),
                     'clicked-manage-presets':
-                        (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, ()),
+                        (GObject.SignalFlags.RUN_LAST, None, ()),
                     'clicked-save':
-                        (gobject.SIGNAL_RUN_LAST,
-                         gobject.TYPE_NONE,
-                         (gobject.TYPE_STRING,
-                          gobject.TYPE_INT,
-                          gobject.TYPE_INT,
-                          gobject.TYPE_INT,
-                          gobject.TYPE_STRING,
-                          gobject.TYPE_STRING,
-                          gobject.TYPE_BOOLEAN)),
+                        (GObject.SignalFlags.RUN_LAST,
+                         None,
+                         (GObject.TYPE_STRING,
+                          GObject.TYPE_INT,
+                          GObject.TYPE_INT,
+                          GObject.TYPE_INT,
+                          GObject.TYPE_STRING,
+                          GObject.TYPE_STRING,
+                          GObject.TYPE_BOOLEAN)),
                     'clicked-preset':
-                        (gobject.SIGNAL_RUN_LAST,
-                         gobject.TYPE_NONE,
-                         (gobject.TYPE_PYOBJECT,)),
+                        (GObject.SignalFlags.RUN_LAST,
+                         None,
+                         (GObject.TYPE_PYOBJECT,)),
                     'double-clicked-preset':
-                        (gobject.SIGNAL_RUN_LAST,
-                         gobject.TYPE_NONE,
-                         (gobject.TYPE_PYOBJECT,))}
+                        (GObject.SignalFlags.RUN_LAST,
+                         None,
+                         (GObject.TYPE_PYOBJECT,))}
 
     def __init__(self, glade_file_name, name_validator_func, presets_store, preset_display_func):
-        gobject.GObject.__init__(self)
+        GObject.GObject.__init__(self)
 
         self._valid_name_func = name_validator_func;
         self._presets_store = presets_store
         self._preset_display_func = preset_display_func
         
         self._presets_list = ScrollableButtonList()
-        labels_size_group = gtk.SizeGroup(gtk.SIZE_GROUP_HORIZONTAL)
+        labels_size_group = Gtk.SizeGroup(Gtk.SizeGroupMode.HORIZONTAL)
         self._duration_chooser = DurationChooser(labels_size_group)
         
         glade_widgets = glade.XML(glade_file_name, 'start_timer_dialog')
@@ -86,19 +86,19 @@ class StartTimerDialog(gobject.GObject):
         self._auto_start_check = glade_widgets.get_widget('auto_start_check')
         
         labels_size_group.add_widget(name_label)
-        self._dialog.set_default_response(gtk.RESPONSE_OK)
-        duration_chooser_container.pack_start(self._duration_chooser)
-        presets_chooser_container.pack_start(self._presets_list)
+        self._dialog.set_default_response(Gtk.ResponseType.OK)
+        duration_chooser_container.pack_start(self._duration_chooser, True, True, 0)
+        presets_chooser_container.pack_start(self._presets_list, True, True, 0)
         
         self._dialog.connect('response', self._on_dialog_response)
         self._dialog.connect('delete-event', self._dialog.hide_on_delete)
-        self._dialog.add_events(gdk.BUTTON_PRESS_MASK)
+        self._dialog.add_events(Gdk.EventMask.BUTTON_PRESS_MASK)
         self._duration_chooser.connect('duration-changed', self._on_duration_changed)
         self._name_entry.connect('changed', self._on_name_entry_changed)
         self._save_button.connect('clicked', self._on_save_button_clicked)
         # Check that executable is valid while inserting text
         self._command_entry.connect('changed', self._check_is_valid_command)
-        self._next_timer_combo.child.connect("changed",
+        self._next_timer_combo.get_child().connect("changed",
                                 self._on_next_timer_combo_entry_child_changed)
         glade_widgets.get_widget('manage_presets_button').connect('clicked',
                                                                   self._on_manage_presets_button_clicked)
@@ -134,13 +134,13 @@ class StartTimerDialog(gobject.GObject):
         return (self._name_entry.get_text().strip(),) + \
                 self._duration_chooser.get_duration() + \
                 (self._command_entry.get_text().strip(),
-                 self._next_timer_combo.child.get_text().strip(),
+                 self._next_timer_combo.get_child().get_text().strip(),
                  self._auto_start_check.get_active())
         
     def set_name_and_duration(self, name, hours, minutes, seconds, *args):
         self._name_entry.set_text(name)
         self._command_entry.set_text(args[0])
-        self._next_timer_combo.child.set_text(args[1])
+        self._next_timer_combo.get_child().set_text(args[1])
         self._auto_start_check.set_active(args[2])
         self._duration_chooser.set_duration(hours, minutes, seconds)
 
@@ -161,10 +161,10 @@ class StartTimerDialog(gobject.GObject):
         row_iter = self._presets_store.get_iter_first()
         while row_iter is not None:
             name = self._preset_display_func(row_iter)
-            label = gtk.Label(name)
-            label.set_ellipsize(pango.ELLIPSIZE_END)
-            button = gtk.Button()
-            button.set_relief(gtk.RELIEF_NONE)
+            label = Gtk.Label(label=name)
+            label.set_ellipsize(Pango.EllipsizeMode.END)
+            button = Gtk.Button()
+            button.set_relief(Gtk.ReliefStyle.NONE)
             button.add(label)
             self._presets_list.add_button(button)
             
@@ -216,7 +216,7 @@ class StartTimerDialog(gobject.GObject):
     def _on_preset_button_double_clicked(self, button, event, row_path):
         """Emit the `double-clicked-preset' signal."""
         # Check that the double-click event shot off on the preset button
-        if event.type == gdk._2BUTTON_PRESS:
+        if event.type == Gdk._2BUTTON_PRESS:
             self.emit('double-clicked-preset', row_path)
 
     def _on_manage_presets_button_clicked(self, button):
@@ -230,10 +230,10 @@ class StartTimerDialog(gobject.GObject):
         self._check_for_valid_save_preset_input()
 
     def _on_dialog_response(self, dialog, response_id):
-        if response_id == gtk.RESPONSE_OK:
+        if response_id == Gtk.ResponseType.OK:
             self._duration_chooser.normalize_fields()
             self.emit('clicked-start')
-        elif response_id == gtk.RESPONSE_CANCEL:
+        elif response_id == Gtk.ResponseType.CANCEL:
             self.emit('clicked-cancel')
         self._dialog.hide()
         
@@ -242,7 +242,7 @@ class StartTimerDialog(gobject.GObject):
         (hours, minutes, seconds) = self._duration_chooser.get_duration()
         name = self._name_entry.get_text()
         command = self._command_entry.get_text()
-        next_timer = self._next_timer_combo.child.get_text()
+        next_timer = self._next_timer_combo.get_child().get_text()
         auto_start = self._auto_start_check.get_active()
         self.emit('clicked-save', name, hours, minutes, seconds, command,
                   next_timer, auto_start)

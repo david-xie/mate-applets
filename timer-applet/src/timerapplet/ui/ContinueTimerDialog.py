@@ -15,32 +15,32 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 from gettext import gettext as _
-import gtk
+from gi.repository import Gtk
 
 class ContinueTimerDialog(object):
     (STOP_TIMER, KEEP_PAUSED, CONTINUE_TIMER) = xrange(3)
 
     def __init__(self, glade_file_name, header_text, body_text):
-        self._dialog = gtk.Dialog(_('Continue Timer'),
+        self._dialog = Gtk.Dialog(_('Continue Timer'),
                                   None,
-                                  gtk.DIALOG_DESTROY_WITH_PARENT,
-                                  (_('_Stop Timer'), gtk.RESPONSE_NO,
-                                   _('_Keep Paused'), gtk.RESPONSE_CLOSE,
-                                   _('_Continue Timer'), gtk.RESPONSE_YES))
+                                  Gtk.DialogFlags.DESTROY_WITH_PARENT,
+                                  (_('_Stop Timer'), Gtk.ResponseType.NO,
+                                   _('_Keep Paused'), Gtk.ResponseType.CLOSE,
+                                   _('_Continue Timer'), Gtk.ResponseType.YES))
         self._dialog.props.border_width = 6
         self._dialog.props.has_separator = False
         self._dialog.props.resizable = False
         self._dialog.vbox.props.spacing = 12
-        self._dialog.set_default_response(gtk.RESPONSE_YES)
+        self._dialog.set_default_response(Gtk.ResponseType.YES)
 
-        hbox = gtk.HBox(False, 0)
+        hbox = Gtk.HBox(False, 0)
         hbox.props.spacing = 12
         hbox.props.border_width = 6
         
-        image = gtk.image_new_from_stock(gtk.STOCK_DIALOG_QUESTION, gtk.ICON_SIZE_DIALOG)
+        image = Gtk.Image.new_from_stock(Gtk.STOCK_DIALOG_QUESTION, Gtk.IconSize.DIALOG)
         image.props.yalign = 0.0
         
-        label = gtk.Label('<span weight="bold" size="larger">%s</span>\n\n%s' % (header_text, body_text))
+        label = Gtk.Label('<span weight="bold" size="larger">%s</span>\n\n%s' % (header_text, body_text))
         label.props.use_markup = True
         label.props.wrap = True
         label.props.yalign = 0.0
@@ -54,9 +54,9 @@ class ContinueTimerDialog(object):
     def get_response(self):
         dialog_result = self._dialog.run()
         self._dialog.hide()
-        if dialog_result == gtk.RESPONSE_YES:
+        if dialog_result == Gtk.ResponseType.YES:
             return ContinueTimerDialog.CONTINUE_TIMER
-        elif dialog_result == gtk.RESPONSE_NO:
+        elif dialog_result == Gtk.ResponseType.NO:
             return ContinueTimerDialog.STOP_TIMER
         else:
             return ContinueTimerDialog.KEEP_PAUSED

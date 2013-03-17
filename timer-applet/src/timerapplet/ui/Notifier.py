@@ -14,8 +14,8 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
-import gobject
-import pynotify
+from gi.repository import GObject
+from gi.repository import Notify
 
 class Notifier(object):
     _NOTIFICATION_REDISPLAY_INTERVAL_SECONDS = 60
@@ -27,8 +27,8 @@ class Notifier(object):
         self._handler_id = None
         self._timeout_id = None
         
-        if not pynotify.is_initted():
-            pynotify.init(app_name)
+        if not Notify.is_initted():
+            Notify.init(app_name)
 
     def begin(self, summary, body, get_reminder_message_func):
         # NOTE: This callback wrapper is to workaround an API-breaking change present in
@@ -40,27 +40,27 @@ class Notifier(object):
             self._on_notification_closed(notification, get_reminder_message_func)
 
         self.end()
-        self._notify = pynotify.Notification(summary, body, self._icon)
+        self._notify = Notify.Notification(summary, body, self._icon)
         self._handler_id = self._notify.connect('closed', closed_callback_wrapper)
         self._notify.show()
 
     def end(self):
         if self._notify is not None:
             if self._timeout_id is not None:
-                gobject.source_remove(self._timeout_id)
+                GObject.source_remove(self._timeout_id)
                 self._timeout_id = None
             self._notify.disconnect(self._handler_id)
             self._handler_id = None
             try:
                 self._notify.close()
-            except gobject.GError:
+            except GObject.GError:
                 # Throws a GError exception if the notification bubble has already been closed.
                 # Ignore the exception.
                 pass
             self._notify = None
 
     def _on_notification_closed(self, notification, get_reminder_message_func):
-        self._timeout_id = gobject.timeout_add(Notifier._NOTIFICATION_REDISPLAY_INTERVAL_SECONDS * 1000,
+        self._timeout_id = GObject.timeout_add(Notifier._NOTIFICATION_REDISPLAY_INTERVAL_SECONDS * 1000,
                                                self._on_notification_redisplay_timeout,
                                                get_reminder_message_func)
         

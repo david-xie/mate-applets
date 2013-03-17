@@ -14,48 +14,48 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
-import gobject
-import gtk
-import gtk.glade as glade
+from gi.repository import GObject
+from gi.repository import Gtk
+import Gtk.glade as glade
 
-class PreferencesDialog(gobject.GObject):
+class PreferencesDialog(GObject.GObject):
     __gsignals__ = \
     {
         'show-remaining-time-changed': 
         (
-            gobject.SIGNAL_RUN_LAST,
-            gobject.TYPE_NONE,
-            (gobject.TYPE_BOOLEAN,)
+            GObject.SignalFlags.RUN_LAST,
+            None,
+            (GObject.TYPE_BOOLEAN,)
         ),
         'play-sound-changed':
         (
-            gobject.SIGNAL_RUN_LAST,
-            gobject.TYPE_NONE,
-            (gobject.TYPE_BOOLEAN,)
+            GObject.SignalFlags.RUN_LAST,
+            None,
+            (GObject.TYPE_BOOLEAN,)
         ),
         'use-custom-sound-changed':
         (
-            gobject.SIGNAL_RUN_LAST,
-            gobject.TYPE_NONE,
-            (gobject.TYPE_BOOLEAN,)
+            GObject.SignalFlags.RUN_LAST,
+            None,
+            (GObject.TYPE_BOOLEAN,)
         ),
         'show-popup-notification-changed':
         (
-            gobject.SIGNAL_RUN_LAST,
-            gobject.TYPE_NONE,
-            (gobject.TYPE_BOOLEAN,)
+            GObject.SignalFlags.RUN_LAST,
+            None,
+            (GObject.TYPE_BOOLEAN,)
         ),
         'show-pulsing-icon-changed':
         (
-            gobject.SIGNAL_RUN_LAST,
-            gobject.TYPE_NONE,
-            (gobject.TYPE_BOOLEAN,)
+            GObject.SignalFlags.RUN_LAST,
+            None,
+            (GObject.TYPE_BOOLEAN,)
         ),
         'custom-sound-path-changed':
         (
-            gobject.SIGNAL_RUN_LAST,
-            gobject.TYPE_NONE,
-            (gobject.TYPE_STRING,)
+            GObject.SignalFlags.RUN_LAST,
+            None,
+            (GObject.TYPE_STRING,)
         )
     }
 
@@ -66,47 +66,47 @@ class PreferencesDialog(gobject.GObject):
          'Show remaining time',
          'Whether to show remaining time when the timer is running',
          False,
-         gobject.PARAM_WRITABLE
+         GObject.PARAM_WRITABLE
         ),
        'play-sound':
         (bool,
          'Play notification sound',
          'Whether to play notification sound when the timer is finished',
          False,
-         gobject.PARAM_WRITABLE
+         GObject.PARAM_WRITABLE
         ),
        'use-custom-sound':
         (bool,
          'Use custom sound',
          'Whether to use a custom notification sound',
          False,
-         gobject.PARAM_WRITABLE
+         GObject.PARAM_WRITABLE
         ),
        'show-popup-notification':
         (bool,
          'Show Popup notification',
          'Whether to show a popup notifcation when timer finished', 
          False,
-         gobject.PARAM_WRITABLE
+         GObject.PARAM_WRITABLE
         ), 
        'show-pulsing-icon':
         (bool,
          'Show pulsing icon',
          'Whether to show pulsing icon when timer finished', 
          False,
-         gobject.PARAM_WRITABLE
+         GObject.PARAM_WRITABLE
         ), 
        'custom-sound-path':
         (str,
          'Custom sound path',
          'Path to a custom notification sound',
          '',
-         gobject.PARAM_WRITABLE
+         GObject.PARAM_WRITABLE
         )
     }
                         
     def __init__(self, glade_file_name):
-        gobject.GObject.__init__(self)
+        GObject.GObject.__init__(self)
         glade_widgets = glade.XML(glade_file_name, 'preferences_dialog')
         self._preferences_dialog = glade_widgets.get_widget('preferences_dialog')
         self._show_time_check = glade_widgets.get_widget('show_time_check')
@@ -132,7 +132,7 @@ class PreferencesDialog(gobject.GObject):
         self._pulsing_icon_check.connect('toggled', self._on_pulsing_icon_toggled)
         
         self._sound_chooser_button.connect('selection-changed', self._on_sound_chooser_button_selection_changed)
-        self._preferences_dialog.connect('delete-event', gtk.Widget.hide_on_delete)
+        self._preferences_dialog.connect('delete-event', Gtk.Widget.hide_on_delete)
         self._preferences_dialog.connect('response', lambda dialog, response_id: self._preferences_dialog.hide())
     
     def show(self):

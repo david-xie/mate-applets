@@ -14,7 +14,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
-import gtk
+from gi.repository import Gtk
 from PulseButton import PulseButton
 from PieMeter import PieMeter
 
@@ -22,15 +22,15 @@ class StatusButton(PulseButton):
     def __init__(self):
         PulseButton.__init__(self)
         
-        self._tooltip = gtk.Tooltip()
+        self._tooltip = Gtk.Tooltip()
 
-        self._icon_widget = gtk.Image()        
+        self._icon_widget = Gtk.Image()        
         self._pie_meter = PieMeter()
-        self._label_widget = gtk.Label()
-        self._visual_box = gtk.HBox()
+        self._label_widget = Gtk.Label()
+        self._visual_box = Gtk.HBox()
         
-        self._visual_box.pack_start(self._icon_widget)
-        self._visual_box.pack_start(self._pie_meter)
+        self._visual_box.pack_start(self._icon_widget, True, True, 0)
+        self._visual_box.pack_start(self._pie_meter, True, True, 0)
         
         self._layout_box = None
         self._use_vertical = None
@@ -49,7 +49,7 @@ class StatusButton(PulseButton):
         self._label_widget.set_text(text)
         
     def set_icon(self, image_path):
-        self._icon_widget.set_from_pixbuf(gtk.gdk.pixbuf_new_from_file_at_size(image_path, -1, 20))
+        self._icon_widget.set_from_pixbuf(GdkPixbuf.Pixbuf.new_from_file_at_size(image_path, -1, 20))
         #elf._icon_widget.set_from_file(image_path)
         
     def set_use_icon(self, use_icon):
@@ -86,9 +86,9 @@ class StatusButton(PulseButton):
         
         new_layout_box = None
         if self._use_vertical:
-            new_layout_box = gtk.VBox(False, 2)
+            new_layout_box = Gtk.VBox(False, 2)
         else:
-            new_layout_box = gtk.HBox(False, 2)
+            new_layout_box = Gtk.HBox(False, 2)
         
         new_layout_box.pack_start(self._visual_box, True, True, 0)
         new_layout_box.pack_start(self._label_widget, False, False, 0)

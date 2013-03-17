@@ -17,18 +17,18 @@
 
 import datetime
 import time
-import gobject
+from gi.repository import GObject
 
-class Timer(gobject.GObject):
+class Timer(GObject.GObject):
     (STATE_IDLE, STATE_RUNNING, STATE_PAUSED, STATE_FINISHED) = xrange(4)
     
     __gsignals__ = {'time-changed':
-                        (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, ()),
+                        (GObject.SignalFlags.RUN_LAST, None, ()),
                     'state-changed':
-                        (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, ())}
+                        (GObject.SignalFlags.RUN_LAST, None, ())}
     
     def __init__(self):
-        gobject.GObject.__init__(self)
+        GObject.GObject.__init__(self)
         self._state = Timer.STATE_IDLE
         self._duration_seconds = 0
         self._remaining_seconds = 0
@@ -146,7 +146,7 @@ class Timer(gobject.GObject):
             elif self._state == Timer.STATE_PAUSED:
                 self._end_time = cur_time + self._remaining_seconds
                 
-            gobject.timeout_add(500, self._on_timeout)
+            GObject.timeout_add(500, self._on_timeout)
         elif dest_state == Timer.STATE_PAUSED:
             self._set_remaining_time(self._end_time - cur_time)
             self._end_time = 0

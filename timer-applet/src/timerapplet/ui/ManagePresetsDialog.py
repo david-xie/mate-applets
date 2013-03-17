@@ -14,20 +14,20 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
-import gobject
-import gtk
-import gtk.glade as glade
+from gi.repository import GObject
+from gi.repository import Gtk
+import Gtk.glade as glade
 
-class ManagePresetsDialog(gobject.GObject):
+class ManagePresetsDialog(GObject.GObject):
     __gsignals__ = {'clicked-add':
-                        (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, ()),
+                        (GObject.SignalFlags.RUN_LAST, None, ()),
                     'clicked-edit':
-                        (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, (gobject.TYPE_PYOBJECT,)),
+                        (GObject.SignalFlags.RUN_LAST, None, (GObject.TYPE_PYOBJECT,)),
                     'clicked-remove':
-                        (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, (gobject.TYPE_PYOBJECT,))}
+                        (GObject.SignalFlags.RUN_LAST, None, (GObject.TYPE_PYOBJECT,))}
 
     def __init__(self, glade_file_name, presets_store, preset_display_func):
-        gobject.GObject.__init__(self)
+        GObject.GObject.__init__(self)
         
         glade_widgets = glade.XML(glade_file_name, 'manage_presets_dialog')
         self._dialog = glade_widgets.get_widget('manage_presets_dialog')
@@ -37,8 +37,8 @@ class ManagePresetsDialog(gobject.GObject):
         self._add_button = glade_widgets.get_widget('add_button')
 
         self._presets_view.set_model(presets_store)
-        renderer = gtk.CellRendererText()
-        col = gtk.TreeViewColumn('Preset', renderer)
+        renderer = Gtk.CellRendererText()
+        col = Gtk.TreeViewColumn('Preset', renderer)
         
         def preset_cell_data_func(col, cell, model, row_iter, user_data=None):
             cell.props.text = preset_display_func(row_iter)

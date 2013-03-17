@@ -15,7 +15,7 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 from gettext import gettext as _
-import gtk
+from gi.repository import Gtk
 from timerapplet import core
 from timerapplet import ui
 from timerapplet import utils
@@ -33,7 +33,7 @@ class GlobalController(object):
         self._manage_presets_dialog.connect('clicked-edit', self._on_mgr_clicked_edit)
         self._manage_presets_dialog.connect('clicked-remove', self._on_mgr_clicked_remove)
         
-        gtk.window_set_default_icon_from_file(config.ICON_PATH)
+        Gtk.Window.set_default_icon_from_file(config.ICON_PATH)
 
     def get_presets_store(self):
         return self._presets_store

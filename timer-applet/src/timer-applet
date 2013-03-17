@@ -15,13 +15,14 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-
-from os import path
+import gi
+gi.require_version("Gtk", "2.0")
 import gettext
 import locale
 import sys
-import gtk
-import mateapplet
+from os import path
+from gi.repository import Gtk
+from gi.repository import MatePanelApplet
 from timerapplet import config
 from timerapplet.controllers import GlobalController, TimerApplet, TimerService, TimerManagerService
 from timerapplet.core import AppletMateConfWrapper, Timer
@@ -60,14 +61,14 @@ def check_dependencies():
     try:
         import gobject # >= 2.12
         import gtk # >= 2.10, includes pango
-        import gtk.glade # >= 2.10
+        import Gtk.glade # >= 2.10
         import mateconf # >= 2.18
         import mate # >= 2.18, includes matecomponent.ui
         import mateapplet # >= 2.18, included in python-mate2-desktop
         import pynotify # >= 0.1.1
     except ImportError, err:
-        dialog = gtk.MessageDialog(type=gtk.MESSAGE_ERROR,
-                                    buttons=gtk.BUTTONS_CLOSE,
+        dialog = Gtk.MessageDialog(type=Gtk.MessageType.ERROR,
+                                    buttons=Gtk.ButtonsType.CLOSE,
                                     message_format='%s\n\nPlease install required dependencies.' % err)
         dialog.run()
         dialog.destroy()
@@ -117,16 +118,16 @@ if __name__ == '__main__':
     windowed_mode = (len(sys.argv) > 1 and sys.argv[1] == '-w')
     
     if windowed_mode:
-        win = gtk.Window()
+        win = Gtk.Window()
         win.set_title('Timer Applet')
         applet = mateapplet.Applet()
         applet_factory(applet, None)
         applet.reparent(win)
         
-        applet.connect('destroy', gtk.main_quit)
+        applet.connect('destroy', Gtk.main_quit)
         win.show()
         
-        gtk.main()
+        Gtk.main()
     else:
         mateapplet.matecomponent_factory(
             'OAFIID:TimerApplet_Factory',
