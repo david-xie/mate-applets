@@ -1,4 +1,5 @@
 # Copyright (C) 2008 Jimmy Do <jimmydo@users.sourceforge.net>
+# Copyright (C) 2013 David Xie <david.scriptfan@gmail.com>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -21,21 +22,16 @@ from PieMeter import PieMeter
 class StatusButton(PulseButton):
     def __init__(self):
         PulseButton.__init__(self)
-        
         self._tooltip = Gtk.Tooltip()
-
-        self._icon_widget = Gtk.Image()        
+        self._icon_widget = Gtk.Image()
         self._pie_meter = PieMeter()
         self._label_widget = Gtk.Label()
         self._visual_box = Gtk.HBox()
-        
         self._visual_box.pack_start(self._icon_widget, True, True, 0)
         self._visual_box.pack_start(self._pie_meter, True, True, 0)
-        
         self._layout_box = None
         self._use_vertical = None
         self.set_use_vertical_layout(False)
-        
         # _pie_meter will default to visible while
         # _icon_widget will default to hidden.
         self._pie_meter.show()

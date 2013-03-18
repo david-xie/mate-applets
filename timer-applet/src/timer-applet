@@ -59,9 +59,6 @@ def check_dependencies():
 
     # Check for required dependencies
     try:
-        import gobject # >= 2.12
-        import gtk # >= 2.10, includes pango
-        import Gtk.glade # >= 2.10
         import mateconf # >= 2.18
         import mate # >= 2.18, includes matecomponent.ui
         import mateapplet # >= 2.18, included in python-mate2-desktop
@@ -123,10 +120,8 @@ if __name__ == '__main__':
         applet = mateapplet.Applet()
         applet_factory(applet, None)
         applet.reparent(win)
-        
         applet.connect('destroy', Gtk.main_quit)
         win.show()
-        
         Gtk.main()
     else:
         mateapplet.matecomponent_factory(

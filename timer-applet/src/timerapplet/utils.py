@@ -20,22 +20,25 @@ from gettext import gettext as _
 def is_valid_preset_name(name_str, preset_store, allowed_names=()):
     if len(name_str) == 0:
         return False
-        
+
     name_str = name_str.lower()
     for allowed in allowed_names:
         if name_str == allowed.lower():
             return True
-    
+
     return not preset_store.preset_name_exists_case_insensitive(name_str)
-                
+
+
 def seconds_to_hms(total_seconds):
     (hours, remaining_seconds) = divmod(total_seconds, 3600)
     (minutes, seconds) = divmod(remaining_seconds, 60)
     return (hours, minutes, seconds)
-    
+
+
 def hms_to_seconds(hours, minutes, seconds):
     return hours * 3600 + minutes * 60 + seconds
-    
+
+
 def construct_time_str(remaining_seconds, show_all=True):
     """Return a user-friendly representation of remaining time based on the given number of seconds.
     
@@ -58,20 +61,23 @@ def construct_time_str(remaining_seconds, show_all=True):
             # MM:SS
             return _('%02d:%02d') % (minutes, seconds)
 
+
 def get_display_text_from_datetime(date_time):
     return date_time.strftime('%X')
+
 
 def get_preset_display_text(presets_store, row_iter):
     (name, hours, minutes, seconds, command, next_timer, auto_start) = \
             presets_store.get_preset(row_iter)
-    
     # <preset name> (HH:MM:SS)
     return _('%s (%02d:%02d:%02d)') % (name, hours, minutes, seconds)
+
 
 def serialize_bool(boolean):
     if boolean:
         return "1"
     return "0"
+
 
 def deserialize_bool(string):
     if string == "1":

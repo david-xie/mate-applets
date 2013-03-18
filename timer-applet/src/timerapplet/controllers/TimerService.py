@@ -1,4 +1,5 @@
 # Copyright (C) 2008 Jimmy Do <jimmydo@users.sourceforge.net>
+# Copyright (C) 2013 David Xie <david.scriptfan@gmail.com>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -27,7 +28,7 @@ class TimerService(dbus.service.Object):
                                      dbus.service.BusName(bus_name, bus=dbus.SessionBus()),
                                      object_path)
         self._timer = timer
-    
+
     @dbus.service.method(dbus_interface=DBUS_INTERFACE_NAMESPACE, in_signature='siii')
     def Start(self, name, hours, minutes, seconds):
         if self._timer.get_state() != core.Timer.STATE_IDLE:
@@ -35,12 +36,12 @@ class TimerService(dbus.service.Object):
         self._timer.set_duration(utils.hms_to_seconds(hours, minutes, seconds))
         self._timer.set_name(name)
         self._timer.start()
-        
+
     @dbus.service.method(dbus_interface=DBUS_INTERFACE_NAMESPACE)
     def Stop(self):
         if self._timer.get_state() != core.Timer.STATE_IDLE:
             self._timer.reset()
-    
+
     @dbus.service.method(dbus_interface=DBUS_INTERFACE_NAMESPACE)
     def PauseContinue(self):
         if self._timer.get_state() == core.Timer.STATE_RUNNING:

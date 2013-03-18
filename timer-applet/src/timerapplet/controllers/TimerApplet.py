@@ -36,6 +36,7 @@ def on_widget_button_press_event(sender, event, data=None):
         sender.emit_stop_by_name('button-press-event')  
     return False
 
+
 def force_no_focus_padding(widget):
     Gtk.rc_parse_string('\n'
                         '   style "timer-applet-button-style"\n'
@@ -48,6 +49,7 @@ def force_no_focus_padding(widget):
                         '\n')
     widget.set_name('timer-applet-button')
 
+
 class TimerApplet(object):
     # MateConf key identifiers
     ## You can find Timer Applet's schemas file in data/timer-applet.schemas.in
@@ -57,11 +59,10 @@ class TimerApplet(object):
     _SHOW_POPUP_NOTIFICATION_KEY = 'show_popup_notification'
     _SHOW_PULSING_ICON_KEY = 'show_pulsing_icon'
     _CUSTOM_SOUND_PATH_KEY = 'custom_notification_sound_path'
-    
     _PRESETS_PLACEHOLDER_NAME = 'Placeholder'
     _PRESETS_PLACEHOLDER_PATH = '/popups/popup/Presets/' + _PRESETS_PLACEHOLDER_NAME
     _PRESETS_PATH = '/popups/popup/Presets'
-   
+
     def __init__(self, presets_store, manage_presets_dialog, applet, timer, mateconf_wrapper):
         self._presets_store = presets_store
         self._manage_presets_dialog = manage_presets_dialog
@@ -616,7 +617,7 @@ class TimerApplet(object):
 
     def _stop_sound(self):
         self._gst_playbin.set_state(gst.STATE_NULL)
-    
+
     def _start_pulsing_button(self):
         if self._mateconf.get_bool(TimerApplet._SHOW_PULSING_ICON_KEY):
             self._status_button.start_pulsing()

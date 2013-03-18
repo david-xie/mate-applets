@@ -1,4 +1,5 @@
 # Copyright (C) 2008 Jimmy Do <jimmydo@users.sourceforge.net>
+# Copyright (C) 2013 David Xie <david.scriptfan@gmail.com>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -28,7 +29,6 @@ class GlobalController(object):
                                                              self._presets_store.get_model(),
                                                              lambda row_iter: utils.get_preset_display_text(self._presets_store,
                                                                                                             row_iter))
-        
         self._manage_presets_dialog.connect('clicked-add', self._on_mgr_clicked_add)
         self._manage_presets_dialog.connect('clicked-edit', self._on_mgr_clicked_edit)
         self._manage_presets_dialog.connect('clicked-remove', self._on_mgr_clicked_remove)
@@ -37,7 +37,7 @@ class GlobalController(object):
 
     def get_presets_store(self):
         return self._presets_store
-        
+
     def get_manage_presets_dialog(self):
         return self._manage_presets_dialog
 
@@ -46,13 +46,13 @@ class GlobalController(object):
             config.GLADE_PATH,
             _('Add Preset'),
             lambda name: utils.is_valid_preset_name(name, self._presets_store))
-        
+
         result = add_dialog.get_preset()
         if result is not None:
             (name, hours, minutes, seconds, command, next_timer, auto_start) = result
             self._presets_store.add_preset(name, hours, minutes, seconds,
                                            command, next_timer, auto_start)
-        
+
     def _on_mgr_clicked_edit(self, sender, row_path, data=None):
         row_iter = self._presets_store.get_model().get_iter(row_path)
         (name, hours, minutes, seconds, command, next_timer, auto_start) = \
@@ -71,7 +71,7 @@ class GlobalController(object):
                                              next_timer,
                                              auto_start
                                             )
-            
+
         result = edit_dialog.get_preset()
         if result is not None:
             (name, hours, minutes, seconds, command, next_timer, auto_start) = result
