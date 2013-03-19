@@ -53,24 +53,24 @@ class AppletMateConfWrapper(object):
         connection_id = self._client.notify_add(self._get_full_path(relative_key),
                                                 self._notification_callback, (callback, data))
         self._connection_ids.append(connection_id)
-    
+
     def get_string(self, relative_key):
         return self._client.get_string(self._get_full_path(relative_key))
-        
+
     def get_bool(self, relative_key):
         return self._client.get_bool(self._get_full_path(relative_key))
-    
+
     def set_string(self, relative_key, val):
         self._client.set_string(self._get_full_path(relative_key), val)
-        
+
     def set_bool(self, relative_key, val):
         self._client.set_bool(self._get_full_path(relative_key), val)
-        
+
     def delete(self):
         for connection_id in self._connection_ids:
             self._client.notify_remove(connection_id)
         self._connection_ids = []
-            
+
     def _notification_callback(self, client, cnxn_id, entry, data=None):
         (callback, real_data) = data
         
@@ -83,7 +83,7 @@ class AppletMateConfWrapper(object):
         # the panel.
         if mateconf_value != None:
             callback(mateconf_value, real_data)
-            
+
     def _get_full_path(self, relative_key):
         return path.join(self._base_path, relative_key)
-        
+

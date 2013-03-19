@@ -1,0 +1,12 @@
+[Applet Factory]
+Id=TimerAppletFactory
+InProcess=false
+Location=/home/user/applet/testapplet.py
+Name=Timer Applet Factory
+Description=Timer applet factory
+
+[TimerApplet]
+Name=TimerApplet
+Description=Timer applet factory
+Icon=mate
+MateComponentId=OAFIID:MATE_TimerApplet;

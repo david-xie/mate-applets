@@ -17,7 +17,8 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 import gi
 gi.require_version("Gtk", "2.0")
-import gettext
+
+import gettext as _
 import locale
 import sys
 from os import path
@@ -48,7 +49,8 @@ timer_manager = None
 try:
     timer_manager = TimerManagerService(DBUS_BUS_NAME, timer_manager_obj_path)
 except Exception, err:
-    print 'ERROR: Could not start TimerManagerService. D-Bus support will not be available. Error message: %s' % err
+    print 'ERROR: Could not start TimerManagerService. ' \
+            'D-Bus support will not be available. Error message: %s' % err
 
 def check_dependencies():
     # Check for optional dependencies
@@ -65,15 +67,13 @@ def check_dependencies():
         import pynotify # >= 0.1.1
     except ImportError, err:
         dialog = Gtk.MessageDialog(type=Gtk.MessageType.ERROR,
-                                    buttons=Gtk.ButtonsType.CLOSE,
-                                    message_format='%s\n\nPlease install required dependencies.' % err)
+                                   buttons=Gtk.ButtonsType.CLOSE,
+                                   message_format='%s\n\nPlease install required dependencies.' % err)
         dialog.run()
         dialog.destroy()
         sys.exit(1)
 
 def get_timer_id(mateconf_wrapper):
-    path_components = mateconf_wrapper.get_base_path().split('/')
-    
     # Use the second component from the end, which should usually be 'applet_*',
     # where '*' is some integer assigned by the system.
     # It could also be 'timer-applet' if we're running in standalone mode.
@@ -81,14 +81,18 @@ def get_timer_id(mateconf_wrapper):
     # with underscores.
     return path_components[-2].replace('-', '_')
 
-def applet_factory(applet, iid):
-    check_dependencies()
+def applet_factory(applet, iid, data):
+    #check_dependencies()
+
+    settings_path = applet.get_preferences_path()
+
+    label = Gtk.Label(_("timer_applet_label"))
+    applet.add(label)
+    applet.show_all()
 
     timer = Timer()
-    mateconf_wrapper = AppletMateConfWrapper(applet,
-                                       '/schemas/apps/timer-applet/prefs',
-                                       '/apps/timer-applet/prefs')
-    timer_id = get_timer_id(mateconf_wrapper)
+    #timer_id = get_timer_id(mateconf_wrapper)
+    timer_id = 1
     print 'Timer ID: %s' % timer_id
     
     if timer_manager is not None:
@@ -107,8 +111,9 @@ def applet_factory(applet, iid):
     try:
         TimerService(DBUS_BUS_NAME, timer_obj_path, timer)
     except Exception, err:
-        print 'ERROR: Could not start TimerService. D-Bus support will not be available. Error message: %s' % err
-    
+        print 'ERROR: Could not start TimerService. ' \
+                'D-Bus support will not be available. Error message: %s' % err
+
     return True
 
 if __name__ == '__main__':
@@ -124,9 +129,6 @@ if __name__ == '__main__':
         win.show()
         Gtk.main()
     else:
-        mateapplet.matecomponent_factory(
-            'OAFIID:TimerApplet_Factory',
-            mateapplet.Applet.__gtype__,
-            config.PACKAGE,
-            config.VERSION,
-            applet_factory)
+        MatePanelApplet.Applet.factory_main("TimerAppletFactory", True,
+                                            MatePanelApplet.Applet.__gtype__,
+                                            applet_factory, None)

@@ -1,4 +1,5 @@
 # Copyright (C) 2008 Jimmy Do <jimmydo@users.sourceforge.net>
+# Copyright (C) 2013 David Xie <david.scriptfan@gmail.com>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
