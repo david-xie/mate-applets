@@ -22,39 +22,35 @@ from gi.repository import Gtk
 class PulseButton(Gtk.Button):
     def __init__(self):
         super(PulseButton, self).__init__()
-        
         self._anim_period_seconds = 0.7
         self._start_time = 0.0
         self._factor = 0.0
-        
+
     def start_pulsing(self):
         self._start_time = time.time()
         GObject.timeout_add(10, self._on_timeout)
-        
+
     def stop_pulsing(self):
         self._start_time = 0
-        
+
     def _on_timeout(self, data=None):
         if self._start_time <= 0.0:
             return False
         if self.window != None:
             delta = time.time() - self._start_time
-            
             if delta > self._anim_period_seconds:
                 delta = self._anim_period_seconds
                 self._start_time = time.time()
             fraction = delta/self._anim_period_seconds
             self._factor = math.sin(fraction * math.pi)
-            
         self.window.invalidate_rect(self.allocation, True)
         return True
-    
+
     def do_expose_event(self, event):
         Gtk.Button.do_expose_event(self, event)
         if self._start_time > 0:
             context = event.window.cairo_create()
             context.rectangle(0, 0, self.allocation.width, self.allocation.height)
-            
             #color = self.style.bg[Gtk.StateType.SELECTED]
             #color = Gdk.Color(65535, 65535, 65535)
             color = Gdk.Color(0, 0, 0)
@@ -63,7 +59,6 @@ class PulseButton(Gtk.Button):
             blue = color.blue / 65535.0
             context.set_source_rgba(red, green, blue, self._factor * 0.8)
             context.fill()
-        
         return False
 
 GObject.type_register(PulseButton)

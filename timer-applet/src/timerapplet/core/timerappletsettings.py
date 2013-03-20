@@ -1,4 +1,5 @@
 # Copyright (C) 2008 Jimmy Do <jimmydo@users.sourceforge.net>
+# Copyright (C) 2013 David Xie <david.scriptfan@gmail.com>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -15,9 +16,8 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 from os import path
-import mateconf
 
-class AppletMateConfWrapper(object):
+class TimerAppletSettings(object):
     def __init__(self, applet, schema_path, standalone_key):
         object.__init__(self)
         self._connection_ids = []
@@ -73,7 +73,7 @@ class AppletMateConfWrapper(object):
 
     def _notification_callback(self, client, cnxn_id, entry, data=None):
         (callback, real_data) = data
-        
+
         # mateconf_value is of type MateConfValue (mateconf.Value)
         mateconf_value = entry.get_value()
         

@@ -14,7 +14,6 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-
 from gettext import gettext as _
 from gi.repository import Gtk
 from timerapplet import core
@@ -26,9 +25,9 @@ class GlobalController(object):
     def __init__(self):
         self._presets_store = core.PresetsStore(config.PRESETS_PATH)
         self._manage_presets_dialog = ui.ManagePresetsDialog(config.GLADE_PATH,
-                                                             self._presets_store.get_model(),
-                                                             lambda row_iter: utils.get_preset_display_text(self._presets_store,
-                                                                                                            row_iter))
+                    self._presets_store.get_model(),
+                    lambda row_iter: utils.get_preset_display_text(self._presets_store,
+                                                                   row_iter))
         self._manage_presets_dialog.connect('clicked-add', self._on_mgr_clicked_add)
         self._manage_presets_dialog.connect('clicked-edit', self._on_mgr_clicked_edit)
         self._manage_presets_dialog.connect('clicked-remove', self._on_mgr_clicked_remove)

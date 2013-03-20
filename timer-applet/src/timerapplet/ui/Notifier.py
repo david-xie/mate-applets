@@ -13,7 +13,6 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-
 from gi.repository import GObject
 from gi.repository import Notify
 
@@ -26,7 +25,6 @@ class Notifier(object):
         self._notify = None
         self._handler_id = None
         self._timeout_id = None
-        
         if not Notify.is_initted():
             Notify.init(app_name)
 
@@ -63,11 +61,10 @@ class Notifier(object):
         self._timeout_id = GObject.timeout_add(Notifier._NOTIFICATION_REDISPLAY_INTERVAL_SECONDS * 1000,
                                                self._on_notification_redisplay_timeout,
                                                get_reminder_message_func)
-        
+
     def _on_notification_redisplay_timeout(self, get_reminder_message_func):
         message = get_reminder_message_func()
         self._notify.props.body = message
         self._notify.show()
-        
         self._timeout_id = None
         return False

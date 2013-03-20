@@ -16,4 +16,4 @@
 
 from Timer import Timer
 from PresetsStore import PresetsStore
-from AppletMateConfWrapper import AppletMateConfWrapper
+from timerappletsettings import TimerAppletSettings

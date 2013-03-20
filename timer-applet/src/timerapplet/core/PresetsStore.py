@@ -15,23 +15,23 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+import os
+from os import path
+
+import timerapplet.utils as utils
+from gi.repository import GObject
+from gi.repository import Gtk
+
+from timerapplet.utils import serialize_bool
+from timerapplet.utils import deserialize_bool
+from timerapplet.utils import seconds_to_hms
+from timerapplet.utils import hms_to_seconds
+from timerapplet.defs import VERSION
 
 try:
     from xml.etree import ElementTree as et
 except:
     from elementtree import ElementTree as et
-
-import os
-from os import path
-from gi.repository import GObject
-from gi.repository import Gtk
-import timerapplet.utils as utils
-
-from timerapplet.utils import (serialize_bool,
-                               deserialize_bool,
-                               seconds_to_hms,
-                               hms_to_seconds)
-from timerapplet.defs import VERSION
 
 
 class PersistentStore(Gtk.ListStore):
@@ -66,9 +66,7 @@ class PresetsStore(GObject.GObject):
 
     def get_model(self):
         """Return GtkTreeModel.
-        
         Should not rely on it being any particular subtype of GtkTreeModel.
-        
         """
         return self._model
 

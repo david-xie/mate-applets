@@ -16,8 +16,8 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 from gi.repository import Gtk
-from PulseButton import PulseButton
-from PieMeter import PieMeter
+from pulsebutton import PulseButton
+from piemeter import PieMeter
 
 class StatusButton(PulseButton):
     def __init__(self):

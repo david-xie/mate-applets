@@ -13,9 +13,8 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-
-from gettext import gettext as _
 import math
+from gettext import gettext as _
 from gi.repository import GObject
 from gi.repository import Gtk
 
@@ -27,7 +26,6 @@ class DurationChooser(Gtk.VBox):
 
     def __init__(self, size_group):
         GObject.GObject.__init__(self, False, 6)
-        
         self._hours_spin = self._add_row(_('_Hours:'),
                                          size_group,
                                          DurationChooser.MAX_HOURS)
@@ -155,7 +153,7 @@ class DurationChooser(Gtk.VBox):
         spin_button.show()
         row_hbox.show()
         return spin_button
-        
+
     def _on_spin_button_val_changed(self, spin_button):
         self.emit('duration-changed')
 

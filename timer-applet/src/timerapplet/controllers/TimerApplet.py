@@ -1,5 +1,6 @@
 # Copyright (C) 2008 Jimmy Do <jimmydo@users.sourceforge.net>
 # Copyright (C) 2010 Kenny Meyer <knny.myer@gmail.com>
+# Copyright (C) 2013 David Xie <david.scriptfan@gmail.com>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -14,18 +15,16 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-
+import gst
+import subprocess
+import shlex
+import threading
 from gettext import gettext as _
 from gettext import ngettext
 from datetime import datetime, timedelta
 from gi.repository import MatePanelApplet
-import gst
 from gi.repository import Gtk
-import Gtk.glade as glade
-import Gtk.gdk as gdk
-import subprocess
-import shlex
-import threading
+from gi.repository import Gdk
 from timerapplet import config
 from timerapplet import core
 from timerapplet import ui
@@ -118,18 +117,18 @@ class TimerApplet(object):
              ('About', lambda component, verb: self._about_dialog.show())]
         )
         self._applet.add(self._status_button)
-        
+
         # Remove padding around button contents.
         force_no_focus_padding(self._status_button)
-        
+
         # TODO:
         # Fix bug in which button would not propogate middle-clicks
         # and right-clicks to the applet.
         self._status_button.connect('button-press-event', on_widget_button_press_event)
-        
+
         self._status_button.set_relief(Gtk.ReliefStyle.NONE)
         self._status_button.set_icon(config.ICON_PATH);
-       
+
         self._applet.set_tooltip_text(_("Timer Applet"))
 
         self._connect_signals()
@@ -138,13 +137,13 @@ class TimerApplet(object):
         self._update_preferences_dialog()
         self._status_button.show()
         self._applet.show()
-    
+
     def _connect_signals(self):
         self._applet.connect('change-orient', lambda applet, orientation: self._update_status_button())
         self._applet.connect('change-size', lambda applet, size: self._update_status_button())
         self._applet.connect('change-background', self._on_applet_change_background)
         self._applet.connect('destroy', self._on_applet_destroy)
-        
+
         self._presets_store.get_model().connect('row-deleted', 
                                                 lambda model,
                                                 row_path: self._update_popup_menu())
@@ -553,7 +552,6 @@ class TimerApplet(object):
         self._start_timer_dialog.hide()
 
     ## Private methods ##
-    
     def _start_timer_with_settings(self, name, hours, minutes, seconds,
                                    command, next_timer, auto_start):
         print "Resetting timer"

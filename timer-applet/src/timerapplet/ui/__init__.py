@@ -1,4 +1,5 @@
 # Copyright (C) 2008 Jimmy Do <jimmydo@users.sourceforge.net>
+# Copyright (C) 2013 David Xie <david.scriptfan@gmail.com>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -16,13 +17,13 @@
 
 from AddEditPresetDialog import AddEditPresetDialog
 from ContinueTimerDialog import ContinueTimerDialog
-from DurationChooser import DurationChooser
+from durationchooser import DurationChooser
 from ManagePresetsDialog import ManagePresetsDialog
-from Notifier import Notifier
-from PieMeter import PieMeter
+from notifier import Notifier
+from piemeter import PieMeter
 from PreferencesDialog import PreferencesDialog
-from PulseButton import PulseButton
+from pulsebutton import PulseButton
 from ScrollableButtonList import ScrollableButtonList
 from StartTimerDialog import StartTimerDialog
 from StartNextTimerDialog import StartNextTimerDialog
-from StatusButton import StatusButton
+from statusbutton import StatusButton
