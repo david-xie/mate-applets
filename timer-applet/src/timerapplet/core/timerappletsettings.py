@@ -14,14 +14,15 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-
 from os import path
+from gi.repository import Gio
 
 class TimerAppletSettings(object):
     def __init__(self, applet, schema_path, standalone_key):
         object.__init__(self)
         self._connection_ids = []
         
+        self.settings = Gio.Settings.new(schema_path)
         self._client = mateconf.client_get_default()
         
         # Get preferences key path for the given applet instance.

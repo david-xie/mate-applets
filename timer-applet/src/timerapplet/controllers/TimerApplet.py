@@ -96,8 +96,7 @@ class TimerApplet(object):
                                                        _('Continue timer countdown?'),
                                                        _('The timer is currently paused. Would you like to continue countdown?'))
         self._preferences_dialog = ui.PreferencesDialog(config.GLADE_PATH)
-        self._mateconf = mateconf_wrapper
-        
+
         self._about_dialog = glade.XML(config.GLADE_PATH, 'about_dialog').get_widget('about_dialog')
         self._about_dialog.set_version(config.VERSION)
         
