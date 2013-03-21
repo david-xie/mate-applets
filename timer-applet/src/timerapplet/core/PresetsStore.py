@@ -26,7 +26,7 @@ from timerapplet.utils import serialize_bool
 from timerapplet.utils import deserialize_bool
 from timerapplet.utils import seconds_to_hms
 from timerapplet.utils import hms_to_seconds
-from timerapplet.defs import VERSION
+#from timerapplet.defs import VERSION
 
 try:
     from xml.etree import ElementTree as et
