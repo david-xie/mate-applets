@@ -16,6 +16,7 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 from gettext import gettext as _
 from gi.repository import Gtk
+
 from timerapplet import core
 from timerapplet import ui
 from timerapplet import utils
@@ -23,8 +24,8 @@ from timerapplet import config
 
 class GlobalController(object):
     def __init__(self):
-        self._presets_store = core.PresetsStore(config.PRESETS_PATH)
-        self._manage_presets_dialog = ui.ManagePresetsDialog(config.GLADE_PATH,
+        self.presets_store = core.PresetsStore(config.PRESETS_PATH)
+        self.manage_presets_dialog = ui.ManagePresetsDialog(config.GLADE_PATH,
                     self._presets_store.get_model(),
                     lambda row_iter: utils.get_preset_display_text(self._presets_store,
                                                                    row_iter))
@@ -33,12 +34,6 @@ class GlobalController(object):
         self._manage_presets_dialog.connect('clicked-remove', self._on_mgr_clicked_remove)
         
         Gtk.Window.set_default_icon_from_file(config.ICON_PATH)
-
-    def get_presets_store(self):
-        return self._presets_store
-
-    def get_manage_presets_dialog(self):
-        return self._manage_presets_dialog
 
     def _on_mgr_clicked_add(self, sender, data=None):
         add_dialog = ui.AddEditPresetDialog(

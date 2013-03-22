@@ -15,6 +15,6 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 from globalcontroller import GlobalController
-from timerapplet import TimerApplet
+from applet import TimerApplet
 from timermanagerservice import TimerManagerService
 from timerservice import TimerService

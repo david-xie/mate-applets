@@ -23,14 +23,16 @@ import gettext
 import locale
 import sys
 from os import path
+from gettext import gettext as _
 from gi.repository import Gtk
 from gi.repository import MatePanelApplet
 from timerapplet import config
+from timerapplet.core import Timer
+from timerapplet.core import TimerAppletSettings
 from timerapplet.controllers import GlobalController
 from timerapplet.controllers import TimerApplet
 from timerapplet.controllers import TimerService
 from timerapplet.controllers import TimerManagerService
-from timerapplet.core import TimerAppletSettings, Timer
 
 from dbus.mainloop.glib import DBusGMainLoop
 DBusGMainLoop(set_as_default=True)
@@ -38,6 +40,7 @@ DBusGMainLoop(set_as_default=True)
 DBUS_BUS_NAME = 'org.mate.panel.applets.TimerApplet'
 DBUS_OBJ_NAMESPACE = DBUS_BUS_NAME.replace(".", "/")
 
+"""
 gettext.bindtextdomain(config.GETTEXT_PACKAGE, config.LOCALE_DIR)
 gettext.bind_textdomain_codeset(config.GETTEXT_PACKAGE, 'UTF-8')
 gettext.textdomain(config.GETTEXT_PACKAGE)
@@ -55,7 +58,7 @@ try:
 except Exception, err:
     print 'ERROR: Could not start TimerManagerService. ' \
             'D-Bus support will not be available. Error message: %s' % err
-
+"""
 
 def get_timer_id(applet):
     # Use the second component from the end, which should usually be 'applet_*',
@@ -68,12 +71,10 @@ def get_timer_id(applet):
 
 
 def applet_factory(applet, iid, data):
-    import pdb
-    pdb.set_trace()
-    settings_path = applet.get_preferences_path()
+    settings_path = applet.settings_path
 
     timer = Timer()
-    timer_id = get_timer_id(applet)
+    timer_id = applet.id
     timer_id = 1
     print 'Timer ID: %s' % timer_id
 
@@ -81,8 +82,8 @@ def applet_factory(applet, iid, data):
         timer_manager.register_timer_id(timer_id)
         applet.connect('destroy', lambda sender: timer_manager.unregister_timer_id(timer_id))
 
-    TimerApplet(global_controller.get_presets_store(),
-                global_controller.get_manage_presets_dialog(),
+    TimerApplet(global_controller.presets_store,
+                global_controller.manage_presets_dialog,
                 applet,
                 timer,
                 None)
@@ -96,17 +97,16 @@ def applet_factory(applet, iid, data):
         print 'ERROR: Could not start TimerService. ' \
                 'D-Bus support will not be available. Error message: %s' % err
 
-    return True
-
 
 if __name__ == '__main__':
     win_mode = (len(sys.argv) > 1 and sys.argv[1] == '-w')
 
     if win_mode:
-        win = Gtk.Window()
+        win = Gtk.Window(Gtk.WindowType.TOPLEVEL)
         win.set_title(_('Timer Applet'))
         win.connect('destroy', Gtk.main_quit)
-
+        import pdb
+        pdb.set_trace()
         applet = MatePanelApplet.Applet()
         applet_factory(applet, None, None)
         applet.reparent(win)
