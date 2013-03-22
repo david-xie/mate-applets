@@ -19,40 +19,40 @@ from gi.repository import Gtk
 class ContinueTimerDialog(object):
     (STOP_TIMER, KEEP_PAUSED, CONTINUE_TIMER) = xrange(3)
 
-    def __init__(self, glade_file_name, header_text, body_text):
-        self._dialog = Gtk.Dialog(_('Continue Timer'),
+    def __init__(self, header_text, body_text):
+        self.dialog = Gtk.Dialog(_('Continue Timer'),
                                   None,
                                   Gtk.DialogFlags.DESTROY_WITH_PARENT,
                                   (_('_Stop Timer'), Gtk.ResponseType.NO,
                                    _('_Keep Paused'), Gtk.ResponseType.CLOSE,
                                    _('_Continue Timer'), Gtk.ResponseType.YES))
-        self._dialog.props.border_width = 6
-        self._dialog.props.has_separator = False
-        self._dialog.props.resizable = False
-        self._dialog.vbox.props.spacing = 12
-        self._dialog.set_default_response(Gtk.ResponseType.YES)
+        self.dialog.props.border_width = 6
+        self.dialog.props.has_separator = False
+        self.dialog.props.resizable = False
+        self.dialog.vbox.props.spacing = 12
+        self.dialog.set_default_response(Gtk.ResponseType.YES)
 
         hbox = Gtk.HBox(False, 0)
         hbox.props.spacing = 12
         hbox.props.border_width = 6
-        
+
         image = Gtk.Image.new_from_stock(Gtk.STOCK_DIALOG_QUESTION, Gtk.IconSize.DIALOG)
         image.props.yalign = 0.0
-        
+
         label = Gtk.Label('<span weight="bold" size="larger">%s</span>\n\n%s' % (header_text, body_text))
         label.props.use_markup = True
         label.props.wrap = True
         label.props.yalign = 0.0
-        
+
         hbox.pack_start(image, False, False, 0)
         hbox.pack_start(label, False, False, 0)
-        self._dialog.vbox.pack_start(hbox, False, False, 0)
-        
+        self.dialog.vbox.pack_start(hbox, False, False, 0)
+
         hbox.show_all()
 
     def get_response(self):
-        dialog_result = self._dialog.run()
-        self._dialog.hide()
+        dialog_result = self.dialog.run()
+        self.dialog.hide()
         if dialog_result == Gtk.ResponseType.YES:
             return ContinueTimerDialog.CONTINUE_TIMER
         elif dialog_result == Gtk.ResponseType.NO:

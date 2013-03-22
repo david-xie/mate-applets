@@ -25,15 +25,15 @@ from datetime import datetime, timedelta
 from gi.repository import MatePanelApplet
 from gi.repository import Gtk
 from gi.repository import Gdk
-from timerapplet import config
-from timerapplet.core import StatusButton
-from timerapplet.core import Notifier
-from timerapplet.core import StartNextTimerDialog
-from timerapplet.core import StartTimerDialog
-from timerapplet.core import ContinueTimerDialog
-from timerapplet.core import PreferencesDialog
-from timerapplet import ui
 from timerapplet import utils
+from timerapplet import config
+from timerapplet.ui import StatusButton
+from timerapplet.ui import Notifier
+from timerapplet.ui import StartNextTimerDialog
+from timerapplet.ui import StartTimerDialog
+from timerapplet.ui import ContinueTimerDialog
+from timerapplet.ui import PreferencesDialog
+from timerapplet.core import Timer
 
 
 def on_widget_button_press_event(sender, event, data=None):
@@ -56,19 +56,19 @@ def force_no_focus_padding(widget):
 
 
 class TimerApplet(object):
-    # MateConf key identifiers
     ## You can find Timer Applet's schemas file in data/timer-applet.schemas.in
-    _SHOW_REMAINING_TIME_KEY = 'show_remaining_time'
-    _PLAY_SOUND_KEY = 'play_notification_sound'
-    _USE_CUSTOM_SOUND_KEY = 'use_custom_notification_sound'
-    _SHOW_POPUP_NOTIFICATION_KEY = 'show_popup_notification'
-    _SHOW_PULSING_ICON_KEY = 'show_pulsing_icon'
-    _CUSTOM_SOUND_PATH_KEY = 'custom_notification_sound_path'
-    _PRESETS_PLACEHOLDER_NAME = 'Placeholder'
-    _PRESETS_PLACEHOLDER_PATH = '/popups/popup/Presets/' + _PRESETS_PLACEHOLDER_NAME
-    _PRESETS_PATH = '/popups/popup/Presets'
+    KEY_SHOW_REMAINING_TIME = 'show_remaining_time'
+    KEY_PLAY_SOUND = 'play_notification_sound'
+    KEY_USE_CUSTOM_SOUND = 'use_custom_notification_sound'
+    KEY_SHOW_POPUP_NOTIFICATION = 'show_popup_notification'
+    KEY_SHOW_PULSING_ICON = 'show_pulsing_icon'
+    KEY_CUSTOM_SOUND_PATH = 'custom_notification_sound_path'
 
-    def __init__(self, presets_store, manage_presets_dialog, applet, timer, mateconf_wrapper):
+    PRESETS_PATH = '/popups/popup/Presets'
+    PRESETS_PLACEHOLDER_NAME = 'Placeholder'
+    PRESETS_PLACEHOLDER_PATH = PRESETS_PATH + '/' + PRESETS_PLACEHOLDER_NAME
+
+    def __init__(self, presets_store, manage_presets_dialog, applet, timer, gsettings):
         self.presets_store = presets_store
         self_manage_presets_dialog = manage_presets_dialog
         self.applet = applet
@@ -95,19 +95,19 @@ class TimerApplet(object):
         self.start_timer_dialog = StartTimerDialog(config.GLADE_PATH,
                                                        lambda name: utils.is_valid_preset_name(name,
                                                                                                self._presets_store),
-                                                       self._presets_store.get_model(),
+                                                       self.presets_store.get_model(),
                                                        lambda row_iter: utils.get_preset_display_text(self._presets_store,
                                                                                                       row_iter))
-        self.continue_dialog = ContinueTimerDialog(config.GLADE_PATH,
-                                                       _('Continue timer countdown?'),
-                                                       _('The timer is currently paused. Would you like to continue countdown?'))
+        self.continue_dialog = ContinueTimerDialog(_('Continue timer countdown?'),
+                                                   _('The timer is currently paused. Would you like to continue countdown?'))
         self.preferences_dialog = PreferencesDialog(config.GLADE_PATH)
 
         builder = Gtk.Builder()
-        self.about_dialog.builder.add_objects_from_file(config.GLADE_PATH, 'about_dialog').get_object('about_dialog')
+        self.about_dialog = builder.add_objects_from_file(config.GLADE_PATH, 'about_dialog').get_object('about_dialog')
         self.about_dialog.set_version(config.VERSION)
-        
-        self.applet.set_applet_flags(mateapplet.EXPAND_MINOR)
+
+        # FIX ME: this needs to fix
+        #self.applet.set_applet_flags(mateapplet.EXPAND_MINOR)
         self.applet.setup_menu_from_file(
             None,
             config.POPUP_MENU_FILE_PATH,
@@ -149,10 +149,10 @@ class TimerApplet(object):
         self.applet.connect('change-background', self._on_applet_change_background)
         self.applet.connect('destroy', self._on_applet_destroy)
 
-        self._presets_store.get_model().connect('row-deleted', 
+        self.presets_store.get_model().connect('row-deleted', 
                                                 lambda model,
                                                 row_path: self._update_popup_menu())
-        self._presets_store.get_model().connect('row-changed',
+        self.presets_store.get_model().connect('row-changed',
                                                 lambda model,
                                                 row_path,
                                                 row_iter: self._update_popup_menu())
@@ -181,29 +181,29 @@ class TimerApplet(object):
         self.about_dialog.connect('delete-event', Gtk.Widget.hide_on_delete)
         self.about_dialog.connect('response', lambda dialog, response_id: self.about_dialog.hide())
 
-        self._mateconf.add_notification(TimerApplet._SHOW_REMAINING_TIME_KEY, self._on_mateconf_changed)
-        self._mateconf.add_notification(TimerApplet._PLAY_SOUND_KEY, self._on_mateconf_changed)
-        self._mateconf.add_notification(TimerApplet._USE_CUSTOM_SOUND_KEY, self._on_mateconf_changed)
-        self._mateconf.add_notification(TimerApplet._SHOW_PULSING_ICON_KEY, self._on_mateconf_changed)
-        self._mateconf.add_notification(TimerApplet._SHOW_POPUP_NOTIFICATION_KEY, self._on_mateconf_changed)
-        self._mateconf.add_notification(TimerApplet._CUSTOM_SOUND_PATH_KEY, self._on_mateconf_changed)
+        self.gsettings.add_notification(TimerApplet.KEY_SHOW_REMAINING_TIME, self._on_mateconf_changed)
+        self.gsettings.add_notification(TimerApplet.KEY_PLAY_SOUND, self._on_mateconf_changed)
+        self.gsettings.add_notification(TimerApplet.KEY_USE_CUSTOM_SOUND, self._on_mateconf_changed)
+        self.gsettings.add_notification(TimerApplet.KEY_SHOW_PULSING_ICON, self._on_mateconf_changed)
+        self.gsettings.add_notification(TimerApplet.KEY_SHOW_POPUP_NOTIFICATION, self._on_mateconf_changed)
+        self.gsettings.add_notification(TimerApplet.KEY_CUSTOM_SOUND_PATH, self._on_mateconf_changed)
     
     ## Private methods for updating UI ##
     
     def _update_status_button(self):
         current_state = self.timer.get_state()
-        if current_state == core.Timer.STATE_IDLE:
+        if current_state == Timer.STATE_IDLE:
             print 'Idle'
             # This label text should not be visible because the label
             # is hidden when the timer is idle.
             self.status_button.set_label('--:--:--')
             self.status_button.set_tooltip(_('Click to start a new timer countdown.'))
-        elif current_state == core.Timer.STATE_RUNNING:
+        elif current_state == Timer.STATE_RUNNING:
             print 'Running'
-        elif current_state == core.Timer.STATE_PAUSED:
+        elif current_state == Timer.STATE_PAUSED:
             print 'Paused'
             self.status_button.set_tooltip(_('Paused. Click to continue timer countdown.'))
-        elif current_state == core.Timer.STATE_FINISHED:
+        elif current_state == Timer.STATE_FINISHED:
             print 'Finished'
             self.status_button.set_label(_('Finished'))
             name_str = self.timer.get_name()
@@ -215,13 +215,13 @@ class TimerApplet(object):
                 # Timer finished at <time>
                 self.status_button.set_tooltip(_('Timer finished at %s.\nClick to stop timer.') % time_str)
         
-        self.status_button.set_sensitized(current_state == core.Timer.STATE_RUNNING or
-                                           current_state == core.Timer.STATE_FINISHED)
-        self.status_button.set_use_icon(current_state == core.Timer.STATE_IDLE)
-        self.status_button.set_show_remaining_time(current_state != core.Timer.STATE_IDLE and
-                self._mateconf.get_bool(TimerApplet._SHOW_REMAINING_TIME_KEY))
+        self.status_button.set_sensitized(current_state == Timer.STATE_RUNNING or
+                                           current_state == Timer.STATE_FINISHED)
+        self.status_button.set_use_icon(current_state == Timer.STATE_IDLE)
+        self.status_button.set_show_remaining_time(current_state != Timer.STATE_IDLE and
+                self.gsettings.get_bool(TimerApplet.KEY_SHOW_REMAINING_TIME))
         
-        if current_state == core.Timer.STATE_PAUSED:
+        if current_state == Timer.STATE_PAUSED:
             self.status_button.set_pie_fill_color(0.4, 0.4, 0.4)
         else:
             # Use theme color
@@ -243,22 +243,22 @@ class TimerApplet(object):
         
         timer_state = self.timer.get_state()
         has_next_timer = self.timer.get_next_timer()
-        show_pause = (timer_state == core.Timer.STATE_RUNNING)
-        show_continue = (timer_state == core.Timer.STATE_PAUSED)
-        show_stop = (timer_state == core.Timer.STATE_RUNNING or
-                     timer_state == core.Timer.STATE_PAUSED or
-                     timer_state == core.Timer.STATE_FINISHED)
-        show_restart = (timer_state == core.Timer.STATE_RUNNING or
-                        timer_state == core.Timer.STATE_PAUSED or
-                        timer_state == core.Timer.STATE_FINISHED)
-        show_next_timer = ((timer_state == core.Timer.STATE_RUNNING or
-                           timer_state == core.Timer.STATE_PAUSED or
-                           timer_state == core.Timer.STATE_FINISHED) and
+        show_pause = (timer_state == Timer.STATE_RUNNING)
+        show_continue = (timer_state == Timer.STATE_PAUSED)
+        show_stop = (timer_state == Timer.STATE_RUNNING or
+                     timer_state == Timer.STATE_PAUSED or
+                     timer_state == Timer.STATE_FINISHED)
+        show_restart = (timer_state == Timer.STATE_RUNNING or
+                        timer_state == Timer.STATE_PAUSED or
+                        timer_state == Timer.STATE_FINISHED)
+        show_next_timer = ((timer_state == Timer.STATE_RUNNING or
+                           timer_state == Timer.STATE_PAUSED or
+                           timer_state == Timer.STATE_FINISHED) and
                            # Only show this popup menu item if it has a
                            # next_timer defined. Clever, huh? ;)
                            has_next_timer)
         
-        show_presets_menu = (len(self._presets_store.get_model()) > 0)
+        show_presets_menu = (len(self.presets_store.get_model()) > 0)
         show_separator = (
             show_presets_menu or
             show_pause or
@@ -273,41 +273,41 @@ class TimerApplet(object):
         popup.set_prop('/commands/StopTimer', 'hidden', to_hidden_str(show_stop))
         popup.set_prop('/commands/RestartTimer', 'hidden', to_hidden_str(show_restart))
         popup.set_prop('/commands/StartNextTimer', 'hidden', to_hidden_str(show_next_timer))
-        popup.set_prop(TimerApplet._PRESETS_PATH, 'hidden', to_hidden_str(show_presets_menu))
+        popup.set_prop(TimerApplet.PRESETS_PATH, 'hidden', to_hidden_str(show_presets_menu))
         popup.set_prop('/popups/popup/Separator1', 'hidden', to_hidden_str(show_separator))
         
         # Rebuild the Presets submenu
-        if popup.path_exists(TimerApplet._PRESETS_PLACEHOLDER_PATH):
-            popup.rm(TimerApplet._PRESETS_PLACEHOLDER_PATH)
-        popup.set_translate(TimerApplet._PRESETS_PATH,
-                            '<placeholder name="%s"/>' % TimerApplet._PRESETS_PLACEHOLDER_NAME)
+        if popup.path_exists(TimerApplet.PRESETS_PLACEHOLDER_PATH):
+            popup.rm(TimerApplet.PRESETS_PLACEHOLDER_PATH)
+        popup.set_translate(TimerApplet.PRESETS_PATH,
+                            '<placeholder name="%s"/>' % TimerApplet.PRESETS_PLACEHOLDER_NAME)
         
         preset_number = 1
-        row_iter = self._presets_store.get_model().get_iter_first()
+        row_iter = self.presets_store.get_model().get_iter_first()
         while row_iter is not None:
             verb = ('Preset_%d' % preset_number)
             preset_number += 1
             display_text = utils.get_preset_display_text(self._presets_store, row_iter)
             node_xml = '<menuitem verb="%s" name="%s" label="%s"/>' % (verb, verb, display_text)
-            popup.set_translate(TimerApplet._PRESETS_PLACEHOLDER_PATH, node_xml)
+            popup.set_translate(TimerApplet.PRESETS_PLACEHOLDER_PATH, node_xml)
             popup.add_verb(verb,
                            self._on_presets_submenu_item_activated,
-                           self._presets_store.get_model().get_path(row_iter))
-            row_iter = self._presets_store.get_model().iter_next(row_iter)
+                           self.presets_store.get_model().get_path(row_iter))
+            row_iter = self.presets_store.get_model().iter_next(row_iter)
     
     def _update_preferences_dialog(self):
         self.preferences_dialog.props.show_remaining_time = \
-            self._mateconf.get_bool(TimerApplet._SHOW_REMAINING_TIME_KEY)
+            self.gsettings.get_bool(TimerApplet.KEY_SHOW_REMAINING_TIME)
         self.preferences_dialog.props.play_sound = \
-            self._mateconf.get_bool(TimerApplet._PLAY_SOUND_KEY)
+            self.gsettings.get_bool(TimerApplet.KEY_PLAY_SOUND)
         self.preferences_dialog.props.use_custom_sound = \
-            self._mateconf.get_bool(TimerApplet._USE_CUSTOM_SOUND_KEY)
+            self.gsettings.get_bool(TimerApplet.KEY_USE_CUSTOM_SOUND)
         self.preferences_dialog.props.show_popup_notification = \
-            self._mateconf.get_bool(TimerApplet._SHOW_POPUP_NOTIFICATION_KEY)
+            self.gsettings.get_bool(TimerApplet.KEY_SHOW_POPUP_NOTIFICATION)
         self.preferences_dialog.props.show_pulsing_icon = \
-            self._mateconf.get_bool(TimerApplet._SHOW_PULSING_ICON_KEY)
+            self.gsettings.get_bool(TimerApplet.KEY_SHOW_PULSING_ICON)
         self.preferences_dialog.props.custom_sound_path = \
-            self._mateconf.get_string(TimerApplet._CUSTOM_SOUND_PATH_KEY)
+            self.gsettings.get_string(TimerApplet.KEY_CUSTOM_SOUND_PATH)
     
     ## Applet callbacks ##
     
@@ -327,17 +327,17 @@ class TimerApplet(object):
     
     def _on_applet_destroy(self, sender, data=None):
         self._call_notify(show=False)
-        if self.timer.get_state() != core.Timer.STATE_IDLE:
+        if self.timer.get_state() != Timer.STATE_IDLE:
             self.timer.reset() # will stop timeout
-        self._mateconf.delete()
+        self.gsettings.delete()
         
     ## Popup menu callbacks ##
         
     def _on_presets_submenu_item_activated(self, component, verb, row_path):
         # Try hiding the Start Timer dialog, just in case it's open.
         self.start_timer_dialog.hide()
-        row_iter = self._presets_store.get_model().get_iter(row_path)
-        (name, hours, minutes, seconds, command, next_timer, auto_start) = self._presets_store.get_preset(row_iter)
+        row_iter = self.presets_store.get_model().get_iter(row_path)
+        (name, hours, minutes, seconds, command, next_timer, auto_start) = self.presets_store.get_preset(row_iter)
         self._start_timer_with_settings(name, hours, minutes, seconds, command,
                                        next_timer, auto_start)
     
@@ -350,28 +350,28 @@ class TimerApplet(object):
     ## PreferencesDialog callbacks ##
     
     def _on_prefs_show_time_changed(self, sender, show_time):
-        self._mateconf.set_bool(TimerApplet._SHOW_REMAINING_TIME_KEY,
+        self.gsettings.set_bool(TimerApplet.KEY_SHOW_REMAINING_TIME,
                              show_time)
         
     def _on_prefs_play_sound_changed(self, sender, play_sound):
-        self._mateconf.set_bool(TimerApplet._PLAY_SOUND_KEY,
+        self.gsettings.set_bool(TimerApplet.KEY_PLAY_SOUND,
                              play_sound)
         
     def _on_prefs_use_custom_sound_changed(self, sender, use_custom_sound):
-        self._mateconf.set_bool(TimerApplet._USE_CUSTOM_SOUND_KEY,
+        self.gsettings.set_bool(TimerApplet.KEY_USE_CUSTOM_SOUND,
                              use_custom_sound)
     
     def _on_prefs_show_pulsing_icon_changed(self, sender, show_pulsing_icon):
-        self._mateconf.set_bool(TimerApplet._SHOW_PULSING_ICON_KEY, 
+        self.gsettings.set_bool(TimerApplet.KEY_SHOW_PULSING_ICON, 
                              show_pulsing_icon)
 
     def _on_prefs_show_popup_notification_changed(self, sender,
                                                   show_popup_notification):
-        self._mateconf.set_bool(TimerApplet._SHOW_POPUP_NOTIFICATION_KEY,
+        self.gsettings.set_bool(TimerApplet.KEY_SHOW_POPUP_NOTIFICATION,
                              show_popup_notification)
         
     def _on_prefs_custom_sound_path_changed(self, sender, custom_sound_path):
-        self._mateconf.set_string(TimerApplet._CUSTOM_SOUND_PATH_KEY, 
+        self.gsettings.set_string(TimerApplet.KEY_CUSTOM_SOUND_PATH, 
                                custom_sound_path)
     
     ## Timer callbacks ##
@@ -405,7 +405,7 @@ class TimerApplet(object):
         # That's why they're done here and not in self._update_status_button();
         # self._update_status_button() could be called multiple times
         # while in the same state.
-        if new_state == core.Timer.STATE_FINISHED:
+        if new_state == Timer.STATE_FINISHED:
             name = self.timer.get_name()
             command = self.timer.get_command()
             end_time = self.timer.get_end_time()
@@ -501,24 +501,24 @@ class TimerApplet(object):
     
     def _on_status_button_clicked(self, button, data=None):
         current_state = self.timer.get_state()
-        if current_state == core.Timer.STATE_IDLE:
+        if current_state == Timer.STATE_IDLE:
             self.start_timer_dialog.show()
-        elif current_state == core.Timer.STATE_FINISHED:
+        elif current_state == Timer.STATE_FINISHED:
             self.timer.reset()
-        elif current_state == core.Timer.STATE_PAUSED:
+        elif current_state == Timer.STATE_PAUSED:
             # Temporarily disable status button while the Continue dialog is open.
             self.status_button.props.sensitive = False
             dialog_result = self.continue_dialog.get_response()
             self.status_button.props.sensitive = True
-            if dialog_result == ui.ContinueTimerDialog.CONTINUE_TIMER:
+            if dialog_result == ContinueTimerDialog.CONTINUE_TIMER:
                 self.timer.start()
-            elif dialog_result == ui.ContinueTimerDialog.STOP_TIMER:
+            elif dialog_result == ContinueTimerDialog.STOP_TIMER:
                 self.timer.reset()
-            elif dialog_result == ui.ContinueTimerDialog.KEEP_PAUSED:
+            elif dialog_result == ContinueTimerDialog.KEEP_PAUSED:
                 pass
             else:
                 assert False
-        elif current_state == core.Timer.STATE_RUNNING:
+        elif current_state == Timer.STATE_RUNNING:
             self.timer.stop()
     
     ## StartTimerDialog callbacks ##
@@ -535,13 +535,13 @@ class TimerApplet(object):
     def _on_start_dialog_clicked_save(self, sender, name,
                                       hours, minutes, seconds, command,
                                       next_timer, auto_start, data=None):
-        self._presets_store.add_preset(name, hours, minutes, seconds, command,
+        self.presets_store.add_preset(name, hours, minutes, seconds, command,
                                        next_timer, auto_start)
        
     def _on_start_dialog_clicked_preset(self, sender, row_path, data=None):
-        row_iter = self._presets_store.get_model().get_iter(row_path)
+        row_iter = self.presets_store.get_model().get_iter(row_path)
         (name, hours, minutes, seconds, command, next_timer, auto_start) = \
-               self._presets_store.get_preset(row_iter)
+               self.presets_store.get_preset(row_iter)
         self.start_timer_dialog.set_name_and_duration(name, hours, minutes,
                                                        seconds, command,
                                                        next_timer, auto_start)
@@ -549,9 +549,9 @@ class TimerApplet(object):
     def _on_start_dialog_double_clicked_preset(self, sender, row_path, data=None):
         """Preset is double-clicked. Start the selected preset, and hide the
         dialog."""
-        row_iter = self._presets_store.get_model().get_iter(row_path)
+        row_iter = self.presets_store.get_model().get_iter(row_path)
         (name, hours, minutes, seconds, command, next_timer, auto_start) = \
-               self._presets_store.get_preset(row_iter)
+               self.presets_store.get_preset(row_iter)
         self._start_timer_with_settings(name, hours, minutes, seconds, command,
                                        next_timer, auto_start)
         self.start_timer_dialog.hide()
@@ -560,7 +560,7 @@ class TimerApplet(object):
     def _start_timer_with_settings(self, name, hours, minutes, seconds,
                                    command, next_timer, auto_start):
         print "Resetting timer"
-        if self.timer.get_state() != core.Timer.STATE_IDLE:
+        if self.timer.get_state() != Timer.STATE_IDLE:
             self.timer.reset()
         self.timer.set_duration(utils.hms_to_seconds(hours, minutes, seconds))
         self.timer.set_name(name)
@@ -568,7 +568,7 @@ class TimerApplet(object):
         self.timer.set_next_timer(next_timer)
         self.timer.set_auto_start(auto_start)
         self.timer.start()
-        
+
     def _restart_timer(self):
         self.timer.reset()
         self.timer.start()
@@ -576,25 +576,24 @@ class TimerApplet(object):
     def _start_next_timer(self):
         """Start next timer, if defined."""
         next_timer = self.timer.get_next_timer()
-        for row in self._presets_store.get_model():
+        for row in self.presets_store.get_model():
             #print dir(row)
             if str(row[0]) == next_timer:
                (name, hours, minutes, seconds, command, next_timer, auto_start) = \
-                    self._presets_store.get_preset(row.iter)
+                    self.presets_store.get_preset(row.iter)
                break
         print "Starting timer with settings: ",
         print (name, hours, minutes, seconds, command, next_timer, auto_start)
         self._start_timer_with_settings(name, hours, minutes, seconds, command,
                                         next_timer, auto_start)
 
-
     def _play_notification_sound(self):
-        if not self._mateconf.get_bool(TimerApplet._PLAY_SOUND_KEY):
+        if not self.gsettings.get_bool(TimerApplet.KEY_PLAY_SOUND):
             return
             
         sound_path = config.DEFAULT_SOUND_PATH
-        if self._mateconf.get_bool(TimerApplet._USE_CUSTOM_SOUND_KEY):
-            sound_path = self._mateconf.get_string(TimerApplet._CUSTOM_SOUND_PATH_KEY)
+        if self.gsettings.get_bool(TimerApplet.KEY_USE_CUSTOM_SOUND):
+            sound_path = self.gsettings.get_string(TimerApplet.KEY_CUSTOM_SOUND_PATH)
             
         print 'Playing notification sound: "%s"' % str(sound_path)
         self._play_sound(sound_path)
@@ -622,7 +621,7 @@ class TimerApplet(object):
         self.gst_playbin.set_state(gst.STATE_NULL)
 
     def _start_pulsing_button(self):
-        if self._mateconf.get_bool(TimerApplet._SHOW_PULSING_ICON_KEY):
+        if self.gsettings.get_bool(TimerApplet.KEY_SHOW_PULSING_ICON):
             self.status_button.start_pulsing()
 
     def _stop_pulsing_button(self):
@@ -634,7 +633,7 @@ class TimerApplet(object):
 
     def _call_notify(self, summary=None, message=None,
                      reminder_message_func=None, show=True):
-        if self._mateconf.get_bool(TimerApplet._SHOW_POPUP_NOTIFICATION_KEY):
+        if self.gsettings.get_bool(TimerApplet.KEY_SHOW_POPUP_NOTIFICATION):
             if show:
                 self.notifier.begin(summary, message, reminder_message_func)
             else:

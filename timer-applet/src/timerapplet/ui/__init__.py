@@ -14,16 +14,15 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-
-from addeditpresetdialog import AddEditPresetDialog
-from ContinueTimerDialog import ContinueTimerDialog
-from durationchooser import DurationChooser
-from managepresetsdialog import ManagePresetsDialog
 from notifier import Notifier
 from piemeter import PieMeter
-from preferencesdialog import PreferencesDialog
 from pulsebutton import PulseButton
-from scrollablebuttonlist import ScrollableButtonList
-from starttimerdialog import StartTimerDialog
-from startnexttimerdialog import StartNextTimerDialog
 from statusbutton import StatusButton
+from durationchooser import DurationChooser
+from starttimerdialog import StartTimerDialog
+from preferencesdialog import PreferencesDialog
+from addeditpresetdialog import AddEditPresetDialog
+from continuetimerdialog import ContinueTimerDialog
+from managepresetsdialog import ManagePresetsDialog
+from scrollablebuttonlist import ScrollableButtonList
+from startnexttimerdialog import StartNextTimerDialog
