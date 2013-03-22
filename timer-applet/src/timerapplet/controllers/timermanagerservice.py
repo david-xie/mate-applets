@@ -16,14 +16,15 @@
 import dbus
 import dbus.service
 
-DBUS_INTERFACE_NAMESPACE = 'net.launchpad.timerapplet.TimerApplet.TimerManager'
+DBUS_INTERFACE_NAMESPACE = 'org.mate.panel.applets.TimerApplet.TimerManager'
 
 class TimerManagerService(dbus.service.Object):
+    timer_id_list = []
+
     def __init__(self, bus_name, object_path):
         dbus.service.Object.__init__(self,
                                      dbus.service.BusName(bus_name, bus=dbus.SessionBus()),
                                      object_path)
-        self._timer_id_list = []
 
     def create_and_register_timer_id(self):
         timer_id = str(uuid.uuid4())
@@ -31,11 +32,11 @@ class TimerManagerService(dbus.service.Object):
         return timer_id
 
     def register_timer_id(self, timer_id):
-        self._timer_id_list.append(timer_id)
+        self.timer_id_list.append(timer_id)
 
     def unregister_timer_id(self, timer_id):
-        self._timer_id_list.remove(timer_id)
+        self.timer_id_list.remove(timer_id)
 
     @dbus.service.method(dbus_interface=DBUS_INTERFACE_NAMESPACE, out_signature='as')
     def GetTimerIDList(self):
-        return self._timer_id_list
+        return self.timer_id_list

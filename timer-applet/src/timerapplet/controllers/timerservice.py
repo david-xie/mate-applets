@@ -16,7 +16,7 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 import dbus
 import dbus.service
-from timerapplet import core
+from timerapplet.core import Timer
 from timerapplet import utils
 
 DBUS_INTERFACE_NAMESPACE = 'org.mate.panel.applets.TimerApplet.Timer'
@@ -24,26 +24,26 @@ DBUS_INTERFACE_NAMESPACE = 'org.mate.panel.applets.TimerApplet.Timer'
 class TimerService(dbus.service.Object):
     def __init__(self, bus_name, object_path, timer):
         dbus.service.Object.__init__(self,
-                                     dbus.service.BusName(bus_name, bus=dbus.SessionBus()),
-                                     object_path)
-        self._timer = timer
+                     dbus.service.BusName(bus_name, bus=dbus.SessionBus()),
+                     object_path)
+        self.timer = timer
 
     @dbus.service.method(dbus_interface=DBUS_INTERFACE_NAMESPACE, in_signature='siii')
     def Start(self, name, hours, minutes, seconds):
-        if self._timer.get_state() != core.Timer.STATE_IDLE:
-            self._timer.reset()
-        self._timer.set_duration(utils.hms_to_seconds(hours, minutes, seconds))
-        self._timer.set_name(name)
-        self._timer.start()
+        if self.timer.get_state() != Timer.STATE_IDLE:
+            self.timer.reset()
+        self.timer.set_duration(utils.hms_to_seconds(hours, minutes, seconds))
+        self.timer.set_name(name)
+        self.timer.start()
 
     @dbus.service.method(dbus_interface=DBUS_INTERFACE_NAMESPACE)
     def Stop(self):
-        if self._timer.get_state() != core.Timer.STATE_IDLE:
-            self._timer.reset()
+        if self.timer.get_state() != Timer.STATE_IDLE:
+            self.timer.reset()
 
     @dbus.service.method(dbus_interface=DBUS_INTERFACE_NAMESPACE)
     def PauseContinue(self):
-        if self._timer.get_state() == core.Timer.STATE_RUNNING:
-            self._timer.stop()
-        elif self._timer.get_state() == core.Timer.STATE_PAUSED:
-            self._timer.start()
+        if self.timer.get_state() == Timer.STATE_RUNNING:
+            self.timer.stop()
+        elif self.timer.get_state() == Timer.STATE_PAUSED:
+            self.timer.start()

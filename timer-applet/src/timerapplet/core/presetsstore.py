@@ -26,7 +26,7 @@ from timerapplet.utils import serialize_bool
 from timerapplet.utils import deserialize_bool
 from timerapplet.utils import seconds_to_hms
 from timerapplet.utils import hms_to_seconds
-#from timerapplet.defs import VERSION
+from timerapplet.defs import VERSION
 
 try:
     from xml.etree import ElementTree as et
@@ -108,6 +108,7 @@ class PresetsStore(GObject.GObject):
                 return True
         return False
 
+    @staticmethod
     def _load_presets(model, file_path):
         try:
             tree = et.parse(file_path)
@@ -125,8 +126,7 @@ class PresetsStore(GObject.GObject):
             model.append((name, hours, minutes, seconds, command, next_timer,
                           deserialize_bool(auto_start)))
 
-    _load_presets = staticmethod(_load_presets)
-
+    @staticmethod
     def _save_presets(model, file_path):
         root = et.Element('timerapplet')
         root.set('version', VERSION)
@@ -157,4 +157,3 @@ class PresetsStore(GObject.GObject):
             print 'Creating config directory: %s' % file_dir
             os.makedirs(file_dir, 0744)
         tree.write(file_path)
-    _save_presets = staticmethod(_save_presets)

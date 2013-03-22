@@ -18,33 +18,11 @@ from os import path
 from gi.repository import Gio
 
 class TimerAppletSettings(object):
+    connection_ids = []
+
     def __init__(self, applet, schema_path, standalone_key):
-        object.__init__(self)
-        self._connection_ids = []
-        
         self.settings = Gio.Settings.new(schema_path)
-        self._client = mateconf.client_get_default()
-        
-        # Get preferences key path for the given applet instance.
-        self._base_path = applet.get_preferences_key()
-        if self._base_path is not None:
-            # Apply the schema to the applet instance preferences key.
-            applet.add_preferences(schema_path)
-        else:
-            # NOTE: Don't need to apply schema here because the Timer Applet schema file
-            # already specifies that the schema be automatically applied to the standalone key.
-            
-            self._base_path = standalone_key
-            
-            # Applet would usually do this for us, but since we're running in standalone mode,
-            # we have to do this ourselves in order to receive MateConf change notifications.
-            self._client.add_dir(self._base_path, mateconf.CLIENT_PRELOAD_RECURSIVE) 
-            
-        print 'Base prefs path = %s' % self._base_path
-        
-    def get_base_path(self):
-        return self._base_path
-        
+
     def add_notification(self, relative_key, callback, data=None):
         """Register for notifications of changes to the given preference key.
         

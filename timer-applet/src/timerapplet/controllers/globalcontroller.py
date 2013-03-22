@@ -17,69 +17,70 @@
 from gettext import gettext as _
 from gi.repository import Gtk
 
-from timerapplet import core
-from timerapplet import ui
 from timerapplet import utils
 from timerapplet import config
+from timerapplet.core import PresetsStore
+from timerapplet.ui import ManagePresetsDialog
+from timerapplet.ui import AddEditPresetDialog
 
 
 class GlobalController(object):
     def __init__(self):
-        self.presets_store = core.PresetsStore(config.PRESETS_PATH)
-        self.manage_presets_dialog = ui.ManagePresetsDialog(config.GLADE_PATH,
+        self.presets_store = PresetsStore(config.PRESETS_PATH)
+        self.manage_presets_dialog = ManagePresetsDialog(config.GLADE_PATH,
                     self._presets_store.get_model(),
                     lambda row_iter: utils.get_preset_display_text(self._presets_store,
                                                                    row_iter))
-        self._manage_presets_dialog.connect('clicked-add', self._on_mgr_clicked_add)
-        self._manage_presets_dialog.connect('clicked-edit', self._on_mgr_clicked_edit)
-        self._manage_presets_dialog.connect('clicked-remove', self._on_mgr_clicked_remove)
-        
+        self.manage_presets_dialog.connect('clicked-add', self.on_mgr_clicked_add)
+        self.manage_presets_dialog.connect('clicked-edit', self.on_mgr_clicked_edit)
+        self.manage_presets_dialog.connect('clicked-remove', self.on_mgr_clicked_remove)
+
         Gtk.Window.set_default_icon_from_file(config.ICON_PATH)
 
-    def _on_mgr_clicked_add(self, sender, data=None):
-        add_dialog = ui.AddEditPresetDialog(
+    def on_mgr_clicked_add(self, sender, data=None):
+        add_dialog = AddEditPresetDialog(
             config.GLADE_PATH,
             _('Add Preset'),
-            lambda name: utils.is_valid_preset_name(name, self._presets_store))
+            lambda name: utils.is_valid_preset_name(name, self.presets_store))
 
         result = add_dialog.get_preset()
         if result is not None:
             (name, hours, minutes, seconds, command, next_timer, auto_start) = result
-            self._presets_store.add_preset(name, hours, minutes, seconds,
+            self.presets_store.add_preset(name, hours, minutes, seconds,
                                            command, next_timer, auto_start)
 
-    def _on_mgr_clicked_edit(self, sender, row_path, data=None):
+    def on_mgr_clicked_edit(self, sender, row_path, data=None):
         row_iter = self._presets_store.get_model().get_iter(row_path)
         (name, hours, minutes, seconds, command, next_timer, auto_start) = \
-                self._presets_store.get_preset(row_iter)
+                self.presets_store.get_preset(row_iter)
 
-        edit_dialog = ui.AddEditPresetDialog(config.GLADE_PATH,
-                                             _('Edit Preset'),
-                                             lambda name: utils.is_valid_preset_name(name,
-                                                                                     self._presets_store,
-                                                                                     (name,)),
-                                             name,
-                                             hours,
-                                             minutes,
-                                             seconds,
-                                             command,
-                                             next_timer,
-                                             auto_start
-                                            )
+        edit_dialog = AddEditPresetDialog(config.GLADE_PATH,
+                         _('Edit Preset'),
+                         lambda name: utils.is_valid_preset_name(name,
+                                                                 self.presets_store,
+                                                                 (name,)),
+                         name,
+                         hours,
+                         minutes,
+                         seconds,
+                         command,
+                         next_timer,
+                         auto_start
+                        )
 
         result = edit_dialog.get_preset()
         if result is not None:
             (name, hours, minutes, seconds, command, next_timer, auto_start) = result
-            self._presets_store.modify_preset(row_iter, name, hours, minutes,
+            self.presets_store.modify_preset(row_iter, name, hours, minutes,
                                               seconds, command, next_timer,
                                               auto_start)
 
-    def _on_mgr_clicked_remove(self, sender, row_path, data=None):
-        row_iter = self._presets_store.get_model().get_iter(row_path)
-        self._presets_store.remove_preset(row_iter)
+    def on_mgr_clicked_remove(self, sender, row_path, data=None):
+        row_iter = self.presets_store.get_model().get_iter(row_path)
+        self.presets_store.remove_preset(row_iter)
 
     # TODO
-    def _on_mgr_next_timer_is_being_edited(self, sender, row_path, data=None):
+    def on_mgr_next_timer_is_being_edited(self, sender, row_path, data=None):
         """Show a dropdown widget to help completing the next timer."""
         raise NotImplementedError("Not implemented, yet")
 

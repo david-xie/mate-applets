@@ -13,42 +13,43 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-
 import math
 import time
+
 from gi.repository import GObject
 from gi.repository import Gtk
 
 class PulseButton(Gtk.Button):
+    anim_period_seconds = 0.7
+    start_time = 0.0
+    factor = 0.0
+
     def __init__(self):
         super(PulseButton, self).__init__()
-        self._anim_period_seconds = 0.7
-        self._start_time = 0.0
-        self._factor = 0.0
 
     def start_pulsing(self):
-        self._start_time = time.time()
+        self.start_time = time.time()
         GObject.timeout_add(10, self._on_timeout)
 
     def stop_pulsing(self):
-        self._start_time = 0
+        self.start_time = 0
 
     def _on_timeout(self, data=None):
-        if self._start_time <= 0.0:
+        if self.start_time <= 0.0:
             return False
         if self.window != None:
-            delta = time.time() - self._start_time
-            if delta > self._anim_period_seconds:
-                delta = self._anim_period_seconds
-                self._start_time = time.time()
-            fraction = delta/self._anim_period_seconds
-            self._factor = math.sin(fraction * math.pi)
+            delta = time.time() - self.start_time
+            if delta > self.anim_period_seconds:
+                delta = self.anim_period_seconds
+                self.start_time = time.time()
+            fraction = delta/self.anim_period_seconds
+            self.factor = math.sin(fraction * math.pi)
         self.window.invalidate_rect(self.allocation, True)
         return True
 
     def do_expose_event(self, event):
         Gtk.Button.do_expose_event(self, event)
-        if self._start_time > 0:
+        if self.start_time > 0:
             context = event.window.cairo_create()
             context.rectangle(0, 0, self.allocation.width, self.allocation.height)
             #color = self.style.bg[Gtk.StateType.SELECTED]
@@ -57,7 +58,7 @@ class PulseButton(Gtk.Button):
             red = color.red / 65535.0
             green = color.green / 65535.0
             blue = color.blue / 65535.0
-            context.set_source_rgba(red, green, blue, self._factor * 0.8)
+            context.set_source_rgba(red, green, blue, self.factor * 0.8)
             context.fill()
         return False
 

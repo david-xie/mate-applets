@@ -14,84 +14,84 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-
 from gi.repository import Gtk
+
 from pulsebutton import PulseButton
 from piemeter import PieMeter
 
 class StatusButton(PulseButton):
     def __init__(self):
         PulseButton.__init__(self)
-        self._tooltip = Gtk.Tooltip()
-        self._icon_widget = Gtk.Image()
-        self._pie_meter = PieMeter()
-        self._label_widget = Gtk.Label()
-        self._visual_box = Gtk.HBox()
-        self._visual_box.pack_start(self._icon_widget, True, True, 0)
-        self._visual_box.pack_start(self._pie_meter, True, True, 0)
-        self._layout_box = None
-        self._use_vertical = None
+        self.tooltip = Gtk.Tooltip()
+        self.icon = Gtk.Image()
+        self.pie_meter = PieMeter()
+        self.label = Gtk.Label()
+        self.visual_box = Gtk.HBox()
+        self.visual_box.pack_start(self.icon, True, True, 0)
+        self.visual_box.pack_start(self.pie_meter, True, True, 0)
+        self.layout_box = None
+        self.use_vertical = None
         self.set_use_vertical_layout(False)
-        # _pie_meter will default to visible while
-        # _icon_widget will default to hidden.
-        self._pie_meter.show()
-        self._visual_box.show()
-        self._label_widget.show()
+        # pie_meter will default to visible while
+        # icon_widget will default to hidden.
+        self.pie_meter.show()
+        self.visual_box.show()
+        self.label.show()
     
     def set_tooltip(self, tip_text):
-        self._tooltip.set_text(tip_text)
+        self.tooltip.set_text(tip_text)
     
     def set_label(self, text):
-        self._label_widget.set_text(text)
+        self.label.set_text(text)
         
     def set_icon(self, image_path):
-        self._icon_widget.set_from_pixbuf(GdkPixbuf.Pixbuf.new_from_file_at_size(image_path, -1, 20))
+        self.label.set_from_pixbuf(GdkPixbuf.Pixbuf.new_from_file_at_size(image_path, -1, 20))
         #elf._icon_widget.set_from_file(image_path)
         
     def set_use_icon(self, use_icon):
         if use_icon:
-            self._pie_meter.hide()
-            self._icon_widget.show()
+            self.pie_meter.hide()
+            self.icon.show()
         else:
-            self._pie_meter.show()
-            self._icon_widget.hide()
-        
+            self.pie_meter.show()
+            self.icon.hide()
+
     def set_sensitized(self, sensitized):
-        self._label_widget.props.sensitive = sensitized
+        self.label.props.sensitive = sensitized
         
     def set_show_remaining_time(self, show_remaining_time):
         if show_remaining_time:
-            self._label_widget.show()
+            self.label.show()
         else:
-            self._label_widget.hide()
-            
+            self.label.hide()
+
     def set_progress(self, progress):
-        self._pie_meter.set_progress(progress)
+        self.pie_meter.set_progress(progress)
 
     def set_use_vertical_layout(self, use_vertical):
-        if self._use_vertical == use_vertical:
+        if self.use_vertical == use_vertical:
             return
-        
-        self._use_vertical = use_vertical
-        if self._layout_box is not None:
-            self._layout_box.remove(self._visual_box)
-            self._layout_box.remove(self._label_widget)
-            self.remove(self._layout_box)
-            self._layout_box.destroy()
-            self._layout_box = None
-        
+
+        self.use_vertical = use_vertical
+        if self.layout_box is not None:
+            self.layout_box.remove(self.visual_box)
+            self.layout_box.remove(self.label)
+            self.remove(self.layout_box)
+            self.layout_box.destroy()
+            self.layout_box = None
+
         new_layout_box = None
-        if self._use_vertical:
+        if self.use_vertical:
             new_layout_box = Gtk.VBox(False, 2)
         else:
             new_layout_box = Gtk.HBox(False, 2)
-        
-        new_layout_box.pack_start(self._visual_box, True, True, 0)
-        new_layout_box.pack_start(self._label_widget, False, False, 0)
-        
-        self._layout_box = new_layout_box
-        self.add(self._layout_box)
-        self._layout_box.show()
-        
+
+        new_layout_box.pack_start(self.visual_box, True, True, 0)
+        new_layout_box.pack_start(self.label, False, False, 0)
+
+        self.layout_box = new_layout_box
+        self.add(self.layout_box)
+        self.layout_box.show()
+
     def set_pie_fill_color(self, red, green, blue):
-        self._pie_meter.set_fill_color(red, green, blue)
+        self.pie_meter.set_fill_color(red, green, blue)
