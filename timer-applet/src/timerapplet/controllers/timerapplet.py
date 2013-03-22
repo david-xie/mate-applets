@@ -30,6 +30,7 @@ from timerapplet import core
 from timerapplet import ui
 from timerapplet import utils
 
+
 def on_widget_button_press_event(sender, event, data=None):
     if event.button != 1:
         sender.emit_stop_by_name('button-press-event')  

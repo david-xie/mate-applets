@@ -12,4 +12,4 @@ module_PYTHON = \
 	ScrollableButtonList.py \
 	StartTimerDialog.py \
 	StartNextTimerDialog.py \
-	StatusButton.py
+	statusbutton.py

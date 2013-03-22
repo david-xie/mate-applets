@@ -14,7 +14,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
-from GlobalController import GlobalController
+from globalcontroller import GlobalController
 from timerapplet import TimerApplet
-from TimerManagerService import TimerManagerService
-from TimerService import TimerService
+from timermanagerservice import TimerManagerService
+from timerservice import TimerService
