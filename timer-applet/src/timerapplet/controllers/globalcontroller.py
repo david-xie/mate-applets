@@ -22,6 +22,7 @@ from timerapplet import ui
 from timerapplet import utils
 from timerapplet import config
 
+
 class GlobalController(object):
     def __init__(self):
         self.presets_store = core.PresetsStore(config.PRESETS_PATH)

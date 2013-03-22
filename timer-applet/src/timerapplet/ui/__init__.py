@@ -15,15 +15,15 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
-from AddEditPresetDialog import AddEditPresetDialog
+from addeditpresetdialog import AddEditPresetDialog
 from ContinueTimerDialog import ContinueTimerDialog
 from durationchooser import DurationChooser
-from ManagePresetsDialog import ManagePresetsDialog
+from managepresetsdialog import ManagePresetsDialog
 from notifier import Notifier
 from piemeter import PieMeter
-from PreferencesDialog import PreferencesDialog
+from preferencesdialog import PreferencesDialog
 from pulsebutton import PulseButton
-from ScrollableButtonList import ScrollableButtonList
-from StartTimerDialog import StartTimerDialog
-from StartNextTimerDialog import StartNextTimerDialog
+from scrollablebuttonlist import ScrollableButtonList
+from starttimerdialog import StartTimerDialog
+from startnexttimerdialog import StartNextTimerDialog
 from statusbutton import StatusButton

@@ -13,10 +13,9 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-
 from gi.repository import GObject
 from gi.repository import Gtk
-import Gtk.glade as glade
+
 
 class ManagePresetsDialog(GObject.GObject):
     __gsignals__ = {'clicked-add':
@@ -28,8 +27,8 @@ class ManagePresetsDialog(GObject.GObject):
 
     def __init__(self, glade_file_name, presets_store, preset_display_func):
         GObject.GObject.__init__(self)
-        
-        glade_widgets = glade.XML(glade_file_name, 'manage_presets_dialog')
+        builder = Gtk.Builder()
+        #glade_widgets = glade.XML(glade_file_name, 'manage_presets_dialog')
         self._dialog = glade_widgets.get_widget('manage_presets_dialog')
         self._presets_view = glade_widgets.get_widget('presets_view')
         self._delete_button = glade_widgets.get_widget('delete_button')

@@ -17,16 +17,15 @@
 
 from gi.repository import GObject
 from gi.repository import Gtk
-import Gtk.glade as glade
-import Gtk.gdk as gdk
+from gi.repository import Gdk
 from gi.repository import Pango
 
 from gettext import gettext as _
 from shlex import split as shell_tokenize
 from subprocess import check_call, CalledProcessError
 
-from DurationChooser import DurationChooser
-from ScrollableButtonList import ScrollableButtonList
+from durationchooser import DurationChooser
+from scrollablebuttonlist import ScrollableButtonList
 
 class StartTimerDialog(GObject.GObject):
     __gsignals__ = {'clicked-start':
@@ -64,8 +63,10 @@ class StartTimerDialog(GObject.GObject):
         self._presets_list = ScrollableButtonList()
         labels_size_group = Gtk.SizeGroup(Gtk.SizeGroupMode.HORIZONTAL)
         self._duration_chooser = DurationChooser(labels_size_group)
-        
-        glade_widgets = glade.XML(glade_file_name, 'start_timer_dialog')
+
+        builder = Gtk.Builder()
+        builder.add_from_file()
+        #glade_widgets = glade.XML(glade_file_name, 'start_timer_dialog')
         self._dialog = glade_widgets.get_widget('start_timer_dialog')
         self._ok_button = glade_widgets.get_widget('ok_button')
         name_label = glade_widgets.get_widget('name_label')

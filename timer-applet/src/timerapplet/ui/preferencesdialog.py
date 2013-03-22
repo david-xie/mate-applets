@@ -13,10 +13,9 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-
 from gi.repository import GObject
 from gi.repository import Gtk
-import Gtk.glade as glade
+
 
 class PreferencesDialog(GObject.GObject):
     __gsignals__ = \
@@ -107,7 +106,8 @@ class PreferencesDialog(GObject.GObject):
                         
     def __init__(self, glade_file_name):
         GObject.GObject.__init__(self)
-        glade_widgets = glade.XML(glade_file_name, 'preferences_dialog')
+        builder = Gtk.Builder()
+        #glade_widgets = glade.XML(glade_file_name, 'preferences_dialog')
         self._preferences_dialog = glade_widgets.get_widget('preferences_dialog')
         self._show_time_check = glade_widgets.get_widget('show_time_check')
         self._play_sound_check = glade_widgets.get_widget('play_sound_check')
@@ -134,16 +134,16 @@ class PreferencesDialog(GObject.GObject):
         self._sound_chooser_button.connect('selection-changed', self._on_sound_chooser_button_selection_changed)
         self._preferences_dialog.connect('delete-event', Gtk.Widget.hide_on_delete)
         self._preferences_dialog.connect('response', lambda dialog, response_id: self._preferences_dialog.hide())
-    
+
     def show(self):
         self._preferences_dialog.present()
-    
+
     def _on_show_time_check_toggled(self, widget):
         self.emit('show-remaining-time-changed', widget.props.active)
-        
+
     def _on_play_sound_check_toggled(self, widget):
         self.emit('play-sound-changed', widget.props.active)
-        
+
     def _on_use_custom_sound_radio_toggled(self, widget):
         self.emit('use-custom-sound-changed', widget.props.active)
 
@@ -151,12 +151,12 @@ class PreferencesDialog(GObject.GObject):
         """Emit a signal when `self._popup_notification_check` gets toggled in
         the Preferences dialog window."""
         self.emit('show-popup-notification-changed', widget.props.active)
-        
+
     def _on_pulsing_icon_toggled(self, widget):
         """Emit a signal when `self._popup_notification_check` gets toggled in
         the Preferences dialog window."""
         self.emit('show-pulsing-icon-changed', widget.props.active)
-        
+
     def _on_sound_chooser_button_selection_changed(self, chooser_button):
         filename = chooser_button.get_filename()
         

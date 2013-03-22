@@ -13,8 +13,8 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-
 from gi.repository import Gtk
+
 
 def get_scroll_value_to_reveal_widget(widget_rect, viewport_rect, scroll_val):
     if widget_rect.y < scroll_val:
@@ -22,6 +22,7 @@ def get_scroll_value_to_reveal_widget(widget_rect, viewport_rect, scroll_val):
     elif widget_rect.y + widget_rect.height + 1 > scroll_val + viewport_rect.height:
         scroll_val = widget_rect.y + widget_rect.height + 1 - viewport_rect.height    
     return scroll_val
+
 
 class ScrollableButtonList(Gtk.ScrolledWindow):
     def __init__(self):
@@ -40,26 +41,26 @@ class ScrollableButtonList(Gtk.ScrolledWindow):
         
         self._vbox.show()
         self._viewport.show()
-        
+
     def add_button(self, button):
         button.connect('focus-in-event', self._on_focus)
         button.connect('clicked', self._on_clicked)
         self._vbox.pack_start(button, False, False)
-        
+
     def get_buttons(self):
         return self._vbox.get_children()
-        
+
     def _on_focus(self, widget, event):
         self._scroll_to_widget(widget)
-        
+
     def _on_clicked(self, widget):
         self._scroll_to_widget(widget)
-        
+
     def _scroll_to_widget(self, widget):
         cur_val = self._vadjust.get_value()
         new_val = get_scroll_value_to_reveal_widget(widget.allocation, self._viewport.allocation, cur_val)
-        
+
         if new_val != cur_val:
             self._vadjust.set_value(new_val)
             self._vadjust.value_changed()
-    
+

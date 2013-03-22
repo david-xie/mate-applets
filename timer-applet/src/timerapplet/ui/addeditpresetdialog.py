@@ -13,10 +13,10 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-
 from gi.repository import Gtk
-import Gtk.glade as glade
-from DurationChooser import DurationChooser
+from timerapplet import config
+from durationchooser import DurationChooser
+
 
 class AddEditPresetDialog(object):
     def __init__(self, glade_file_name, title, name_validator_func,
@@ -24,7 +24,9 @@ class AddEditPresetDialog(object):
                  next_timer='', auto_start=False):
         self._valid_name_func = name_validator_func
         
-        glade_widgets = glade.XML(glade_file_name, 'add_edit_preset_dialog')
+        builder = Gtk.Builder()
+        builder.add_from_file(config.GLADE_PATH)
+        #glade_widgets = glade.XML(glade_file_name, 'add_edit_preset_dialog')
         self._dialog = glade_widgets.get_widget('add_edit_preset_dialog')
         self._ok_button = glade_widgets.get_widget('ok_button')
         self._cancel_button = glade_widgets.get_widget('cancel_button')
