@@ -33,8 +33,13 @@ print 'LOCALE_DIR: %s' % LOCALE_DIR
 print 'RESOURCES_DIR: %s' % RESOURCES_DIR
 print 'IMAGES_DIR: %s' % IMAGES_DIR
 
-GLADE_PATH = path.join(RESOURCES_DIR, 'timer-applet.glade')
+GLADE_ABOUT_DIALOG = path.join(RESOURCES_DIR, 'glades/about-dialog.xml')
+GLADE_MANAGE_PRESETS_DIALOG = path.join(RESOURCES_DIR, 'glades/manage-presets-dialog.xml')
+GLADE_PREFERENCES_DIALOG = path.join(RESOURCES_DIR, 'glades/preferences-dialog.xml')
+GLADE_START_TIMER_DIALOG = path.join(RESOURCES_DIR, 'glades/start-timer-dialog.xml')
+GLADE_ADD_EDIT_PRESET_DIALOG = path.join(RESOURCES_DIR, 'glades/add-edit-preset-dialog.xml')
 POPUP_MENU_FILE_PATH = path.join(RESOURCES_DIR, 'TimerApplet.xml')
 ICON_PATH = path.join(IMAGES_DIR, 'timer-applet.png')
 PRESETS_PATH = path.expanduser('~/.config/mate/timer-applet/presets.xml')
 DEFAULT_SOUND_PATH = '/usr/share/sounds/gtk-events/clicked.wav'
+

@@ -16,6 +16,8 @@
 from gi.repository import GObject
 from gi.repository import Gtk
 
+from timerapplet.config import GLADE_PREFERENCES_DIALOG
+
 
 class PreferencesDialog(GObject.GObject):
     __gsignals__ = \
@@ -104,39 +106,39 @@ class PreferencesDialog(GObject.GObject):
         )
     }
                         
-    def __init__(self, glade_file_name):
+    def __init__(self):
         GObject.GObject.__init__(self)
         builder = Gtk.Builder()
-        #glade_widgets = glade.XML(glade_file_name, 'preferences_dialog')
-        self._preferences_dialog = glade_widgets.get_widget('preferences_dialog')
-        self._show_time_check = glade_widgets.get_widget('show_time_check')
-        self._play_sound_check = glade_widgets.get_widget('play_sound_check')
-        self._use_default_sound_radio = glade_widgets.get_widget('use_default_sound_radio')
-        self._use_custom_sound_radio = glade_widgets.get_widget('use_custom_sound_radio')
-        self._sound_chooser_button = glade_widgets.get_widget('sound_chooser_button')
-        self._play_sound_box = glade_widgets.get_widget('play_sound_box')
+        builder.add_from_xml(GLADE_PREFERENCES_DIALOG
+        self.preferences_dialog = builder.get_object('preferences_dialog')
+        self.show_time_check = builder.get_object('show_time_check')
+        self.play_sound_check = builder.get_object('play_sound_check')
+        self.use_default_sound_radio = builder.get_object('use_default_sound_radio')
+        self.use_custom_sound_radio = builder.get_object('use_custom_sound_radio')
+        self.sound_chooser_button = builder.get_object('sound_chooser_button')
+        self.play_sound_box = builder.get_object('play_sound_box')
         #: Popup notification checkbutton
-        self._popup_notification_check = glade_widgets.get_widget('popup_notification_check')
+        self.popup_notification_check = builder.get_object('popup_notification_check')
         #: Pulsing icon checkbutton
-        self._pulsing_icon_check = glade_widgets.get_widget('pulsing_trayicon_check')
+        self.pulsing_icon_check = builder.get_object('pulsing_trayicon_check')
 
         #######################################################################
         # Signals
         #######################################################################
-        self._show_time_check.connect('toggled', self._on_show_time_check_toggled)
-        self._play_sound_check.connect('toggled', self._on_play_sound_check_toggled)
-        self._use_custom_sound_radio.connect('toggled', self._on_use_custom_sound_radio_toggled)
+        self.show_time_check.connect('toggled', self._on_show_time_check_toggled)
+        self.play_sound_check.connect('toggled', self._on_play_sound_check_toggled)
+        self.use_custom_sound_radio.connect('toggled', self._on_use_custom_sound_radio_toggled)
         #: Popup notification checkbutton 'toggled' signal
-        self._popup_notification_check.connect('toggled', self._on_popup_notification_toggled)
+        self.popup_notification_check.connect('toggled', self._on_popup_notification_toggled)
         #: Pulsing icon checkbutton 'toggled' signal
-        self._pulsing_icon_check.connect('toggled', self._on_pulsing_icon_toggled)
+        self.pulsing_icon_check.connect('toggled', self._on_pulsing_icon_toggled)
         
-        self._sound_chooser_button.connect('selection-changed', self._on_sound_chooser_button_selection_changed)
-        self._preferences_dialog.connect('delete-event', Gtk.Widget.hide_on_delete)
-        self._preferences_dialog.connect('response', lambda dialog, response_id: self._preferences_dialog.hide())
+        self.sound_chooser_button.connect('selection-changed', self._on_sound_chooser_button_selection_changed)
+        self.preferences_dialog.connect('delete-event', Gtk.Widget.hide_on_delete)
+        self.preferences_dialog.connect('response', lambda dialog, response_id: self.preferences_dialog.hide())
 
     def show(self):
-        self._preferences_dialog.present()
+        self.preferences_dialog.present()
 
     def _on_show_time_check_toggled(self, widget):
         self.emit('show-remaining-time-changed', widget.props.active)
@@ -148,12 +150,12 @@ class PreferencesDialog(GObject.GObject):
         self.emit('use-custom-sound-changed', widget.props.active)
 
     def _on_popup_notification_toggled(self, widget):
-        """Emit a signal when `self._popup_notification_check` gets toggled in
+        """Emit a signal when `self.popup_notification_check` gets toggled in
         the Preferences dialog window."""
         self.emit('show-popup-notification-changed', widget.props.active)
 
     def _on_pulsing_icon_toggled(self, widget):
-        """Emit a signal when `self._popup_notification_check` gets toggled in
+        """Emit a signal when `self.popup_notification_check` gets toggled in
         the Preferences dialog window."""
         self.emit('show-pulsing-icon-changed', widget.props.active)
 
@@ -169,24 +171,24 @@ class PreferencesDialog(GObject.GObject):
 
     def do_set_property(self, pspec, value):
         if pspec.name == 'show-remaining-time':
-            self._show_time_check.props.active = value
+            self.show_time_check.props.active = value
         elif pspec.name == 'play-sound':
-            self._play_sound_check.props.active = value
-            self._play_sound_box.props.sensitive = value
+            self.play_sound_check.props.active = value
+            self.play_sound_box.props.sensitive = value
         elif pspec.name == 'use-custom-sound':
             if value == True:
-                self._use_custom_sound_radio.props.active = True
-                self._sound_chooser_button.props.sensitive = True
+                self.use_custom_sound_radio.props.active = True
+                self.sound_chooser_button.props.sensitive = True
             else:
                 # Note: Setting _use_custom_sound_radio.props.active to False
                 # does not automatically set _use_default_sound_radio.props.active to True
-                self._use_default_sound_radio.props.active = True
-                self._sound_chooser_button.props.sensitive = False
+                self.use_default_sound_radio.props.active = True
+                self.sound_chooser_button.props.sensitive = False
         elif pspec.name == 'show-popup-notification':
-            self._popup_notification_check.props.active = value
+            self.popup_notification_check.props.active = value
         elif pspec.name == 'show-pulsing-icon':
-            self._pulsing_icon_check.props.active = value
+            self.pulsing_icon_check.props.active = value
         elif pspec.name == 'custom-sound-path':
             # Prevent infinite loop of events.
-            if self._sound_chooser_button.get_filename() != value:
-                self._sound_chooser_button.set_filename(value)
+            if self.sound_chooser_button.get_filename() != value:
+                self.sound_chooser_button.set_filename(value)

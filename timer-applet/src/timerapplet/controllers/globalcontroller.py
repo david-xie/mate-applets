@@ -28,7 +28,7 @@ class GlobalController(object):
     def __init__(self):
         self.presets_store = PresetsStore(config.PRESETS_PATH)
         self.manage_presets_dialog = ManagePresetsDialog(config.GLADE_PATH,
-                    self._presets_store.get_model(),
+                    self.presets_store.get_model(),
                     lambda row_iter: utils.get_preset_display_text(self._presets_store,
                                                                    row_iter))
         self.manage_presets_dialog.connect('clicked-add', self.on_mgr_clicked_add)
