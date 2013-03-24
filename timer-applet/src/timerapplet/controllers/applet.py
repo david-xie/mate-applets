@@ -21,7 +21,8 @@ import shlex
 import threading
 from gettext import gettext as _
 from gettext import ngettext
-from datetime import datetime, timedelta
+from datetime import datetime
+from datetime import timedelta
 from gi.repository import MatePanelApplet
 from gi.repository import Gtk
 from gi.repository import Gdk
@@ -156,7 +157,7 @@ class TimerApplet(object):
                                                 lambda model,
                                                 row_path,
                                                 row_iter: self._update_popup_menu())
-        
+
         self.timer.connect('time-changed', self._on_timer_time_changed)
         self.timer.connect('state-changed', self._on_timer_state_changed)
         self.status_button.connect('clicked', self._on_status_button_clicked)
