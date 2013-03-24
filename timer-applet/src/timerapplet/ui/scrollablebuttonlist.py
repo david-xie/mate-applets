@@ -1,4 +1,5 @@
 # Copyright (C) 2008 Jimmy Do <jimmydo@users.sourceforge.net>
+# Copyright (C) 2013 David Xie <david.scriptfan@gmail.com>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -14,7 +15,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 from gi.repository import Gtk
-
+from gi.repository import GObject
 
 def get_scroll_value_to_reveal_widget(widget_rect, viewport_rect, scroll_val):
     if widget_rect.y < scroll_val:
@@ -27,18 +28,18 @@ def get_scroll_value_to_reveal_widget(widget_rect, viewport_rect, scroll_val):
 class ScrollableButtonList(Gtk.ScrolledWindow):
     def __init__(self):
         GObject.GObject.__init__(self)
-        
+
         self._vadjust = Gtk.Adjustment()
         self._vbox = Gtk.VBox()
         self._viewport = Gtk.Viewport()
-        
+
         self.set_vadjustment(self._vadjust)
         self.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
         self._viewport.modify_bg(Gtk.StateType.NORMAL, self.style.base[Gtk.StateType.NORMAL])
-        
+
         self._viewport.add(self._vbox)
         self.add(self._viewport)
-        
+
         self._vbox.show()
         self._viewport.show()
 

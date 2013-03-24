@@ -15,11 +15,12 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 from gi.repository import Gtk
 
+from timerapplet.config import VERSION
 from timerapplet.config import GLADE_ABOUT_DIALOG
 
 class AboutDialog(object):
     def __init__(self):
         builder = Gtk.Builder()
-        builder.add_from_file(config.GLADE_PATH)
+        builder.add_from_file(GLADE_ABOUT_DIALOG)
         self.dialog = builder.get_object('about_dialog')
-        self.dialog.set_version(config.VERSION)
+        self.dialog.set_version(VERSION)

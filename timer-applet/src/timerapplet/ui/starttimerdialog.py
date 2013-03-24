@@ -1,5 +1,6 @@
 # Copyright (C) 2008 Jimmy Do <jimmydo@users.sourceforge.net>
 # Copyright (C) 2010 Kenny Meyer <knny.myer@gmail.com>
+# Copyright (C) 2013 David Xie <david.scriptfan@gmail.com>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -53,7 +54,7 @@ class StartTimerDialog(GObject.GObject):
                          None,
                          (GObject.TYPE_PYOBJECT,))}
 
-    def __init__(self, glade_file_name, name_validator_func, presets_store, preset_display_func):
+    def __init__(self, name_validator_func, presets_store, preset_display_func):
         GObject.GObject.__init__(self)
 
         self._valid_name_func = name_validator_func;
@@ -102,11 +103,11 @@ class StartTimerDialog(GObject.GObject):
                                 self._on_next_timer_combo_entry_child_changed)
         builder.get_object('manage_presets_button').connect('clicked',
                                                                   self._on_manage_presets_button_clicked)
-        self.presets_store.connect('row-deleted',
-                                    lambda model, row_path: self._update_presets_list())
-        self.presets_store.connect('row-changed',
-                                    lambda model, row_path, row_iter: self._update_presets_list())
-        
+        #self.presets_store.connect('row-deleted',
+        #                            lambda model, row_path: self._update_presets_list())
+        #self.presets_store.connect('row-changed',
+        #                            lambda model, row_path, row_iter: self._update_presets_list())
+
         self._update_presets_list()
         self.duration_chooser.show()
         self.presets_list.show()

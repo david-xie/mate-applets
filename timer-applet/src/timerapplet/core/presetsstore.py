@@ -38,8 +38,8 @@ class PersistentStore(Gtk.ListStore):
     def __init__(self, load_func, save_func, *args):
         #GObject.GObject.__init__(self, *args)
         load_func(self)
-        self.connect('row-deleted', lambda model, row_path: save_func(self))
-        self.connect('row-changed', lambda model, row_path, row_iter: save_func(self))
+        #self.connect('row-deleted', lambda model, row_path: save_func(self))
+        #self.connect('row-changed', lambda model, row_path, row_iter: save_func(self))
 
 
 class PresetsStore(GObject.GObject):

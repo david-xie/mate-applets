@@ -26,7 +26,7 @@ class DurationChooser(Gtk.VBox):
     MAX_SECONDS = 999
 
     def __init__(self, size_group):
-        GObject.GObject.__init__(self, False, 6)
+        GObject.GObject.__init__(self)
         self._hours_spin = self._add_row(_('_Hours:'),
                                          size_group,
                                          DurationChooser.MAX_HOURS)
@@ -135,13 +135,14 @@ class DurationChooser(Gtk.VBox):
         size_group.add_widget(label)
 
         spin_adj = Gtk.Adjustment(0, 0, max_spin_val, 1, 1, 0)
-        spin_button = Gtk.SpinButton(spin_adj, 1.0, 0)
+        #spin_button = Gtk.SpinButton(spin_adj, 1.0, 0)
+        spin_button = Gtk.SpinButton()
         spin_button.props.activates_default = True
         spin_button.props.numeric = False
-        spin_button.props.update_policy = Gtk.UPDATE_IF_VALID
+        #spin_button.props.update_policy = Gtk.UPDATE_IF_VALID
 
         label.set_mnemonic_widget(spin_button)
-        
+
         row_hbox.pack_start(label, False, False, 0)
         row_hbox.pack_start(spin_button, True, True, 0)
         self.pack_start(row_hbox, False, False, 0)
@@ -149,7 +150,7 @@ class DurationChooser(Gtk.VBox):
         spin_button.connect('changed', self._on_spin_button_val_changed)
         spin_button.connect('focus-out-event', self._on_spin_button_focus_out)
         spin_button.connect('activate', self._on_spin_button_activate)
-        
+
         label.show()
         spin_button.show()
         row_hbox.show()

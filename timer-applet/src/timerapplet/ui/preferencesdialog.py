@@ -109,7 +109,7 @@ class PreferencesDialog(GObject.GObject):
     def __init__(self):
         GObject.GObject.__init__(self)
         builder = Gtk.Builder()
-        builder.add_from_xml(GLADE_PREFERENCES_DIALOG
+        builder.add_from_file(GLADE_PREFERENCES_DIALOG)
         self.preferences_dialog = builder.get_object('preferences_dialog')
         self.show_time_check = builder.get_object('show_time_check')
         self.play_sound_check = builder.get_object('play_sound_check')

@@ -87,11 +87,10 @@ class TimerApplet(object):
                 print 'Error playing sound: %s' % err, debug
             return True
         self.gst_playbin.get_bus().add_watch(bus_event)
-        
+
         self.status_button = StatusButton()
         self.notifier = Notifier('TimerApplet', Gtk.STOCK_DIALOG_INFO, self.status_button)
         self.start_next_timer_dialog = StartNextTimerDialog(
-                            config.GLADE_PATH,
                             "Start next timer",
                             "Would you like to start the next timer?")
         self.start_timer_dialog = StartTimerDialog(
@@ -108,10 +107,11 @@ class TimerApplet(object):
 
         # FIX ME: this needs to fix
         #self.applet.set_applet_flags(mateapplet.EXPAND_MINOR)
+
+        # FIX ME: need a Gtk.ActionGroup here!
+        # Learn how to add an ActionGroup
         self.applet.setup_menu_from_file(
-            None,
             config.POPUP_MENU_FILE_PATH,
-            None,
             [('PauseTimer', lambda component, verb: self.timer.stop()),
              ('ContinueTimer', lambda component, verb: self.timer.start()),
              ('StopTimer', lambda component, verb: self.timer.reset()),
