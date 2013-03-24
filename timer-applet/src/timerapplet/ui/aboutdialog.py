@@ -1,4 +1,3 @@
-# Copyright (C) 2008 Jimmy Do <jimmydo@users.sourceforge.net>
 # Copyright (C) 2013 David Xie <david.scriptfan@gmail.com>
 #
 # This program is free software; you can redistribute it and/or modify
@@ -14,16 +13,13 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-from notifier import Notifier
-from piemeter import PieMeter
-from aboutdialog import AboutDialog
-from pulsebutton import PulseButton
-from statusbutton import StatusButton
-from durationchooser import DurationChooser
-from starttimerdialog import StartTimerDialog
-from preferencesdialog import PreferencesDialog
-from addeditpresetdialog import AddEditPresetDialog
-from continuetimerdialog import ContinueTimerDialog
-from managepresetsdialog import ManagePresetsDialog
-from scrollablebuttonlist import ScrollableButtonList
-from startnexttimerdialog import StartNextTimerDialog
+from gi.repository import Gtk
+
+from timerapplet.config import GLADE_ABOUT_DIALOG
+
+class AboutDialog(object):
+    def __init__(self):
+        builder = Gtk.Builder()
+        builder.add_from_file(config.GLADE_PATH)
+        self.dialog = builder.get_object('about_dialog')
+        self.dialog.set_version(config.VERSION)

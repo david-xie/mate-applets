@@ -27,7 +27,7 @@ from timerapplet.ui import AddEditPresetDialog
 class GlobalController(object):
     def __init__(self):
         self.presets_store = PresetsStore(config.PRESETS_PATH)
-        self.manage_presets_dialog = ManagePresetsDialog(config.GLADE_PATH,
+        self.manage_presets_dialog = ManagePresetsDialog(
                     self.presets_store.get_model(),
                     lambda row_iter: utils.get_preset_display_text(self._presets_store,
                                                                    row_iter))
@@ -39,7 +39,6 @@ class GlobalController(object):
 
     def on_mgr_clicked_add(self, sender, data=None):
         add_dialog = AddEditPresetDialog(
-            config.GLADE_PATH,
             _('Add Preset'),
             lambda name: utils.is_valid_preset_name(name, self.presets_store))
 
@@ -54,7 +53,7 @@ class GlobalController(object):
         (name, hours, minutes, seconds, command, next_timer, auto_start) = \
                 self.presets_store.get_preset(row_iter)
 
-        edit_dialog = AddEditPresetDialog(config.GLADE_PATH,
+        edit_dialog = AddEditPresetDialog(
                          _('Edit Preset'),
                          lambda name: utils.is_valid_preset_name(name,
                                                                  self.presets_store,

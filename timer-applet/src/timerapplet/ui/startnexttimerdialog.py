@@ -13,16 +13,12 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-"""
-The Start Next Timer dialog
-
-When a timer ended and the auto_start option was disabled this dialog shows up.
-"""
 from gettext import gettext as _
 from gi.repository import Gtk
 
+
 class StartNextTimerDialog(object):
-    def __init__(self, glade_file_name, header_text, body_text):
+    def __init__(self, header_text, body_text):
         # TODO: Include next_timer in body_text
         self._dialog = Gtk.Dialog(
             _("Start Next Timer"),

@@ -14,64 +14,63 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 from gi.repository import Gtk
-from timerapplet import config
-from durationchooser import DurationChooser
 
+from durationchooser import DurationChooser
+from timerapplet.config import GLADE_ADD_EDIT_PRESET_DIALOG
 
 class AddEditPresetDialog(object):
-    def __init__(self, glade_file_name, title, name_validator_func,
+    def __init__(self, title, name_validator_func,
                  name='', hours=0, minutes=0, seconds=0, command='',
                  next_timer='', auto_start=False):
         self._valid_name_func = name_validator_func
-        
+
         builder = Gtk.Builder()
-        builder.add_from_file(config.GLADE_PATH)
-        #glade_widgets = glade.XML(glade_file_name, 'add_edit_preset_dialog')
-        self._dialog = glade_widgets.get_widget('add_edit_preset_dialog')
-        self._ok_button = glade_widgets.get_widget('ok_button')
-        self._cancel_button = glade_widgets.get_widget('cancel_button')
-        self._name_entry = glade_widgets.get_widget('name_entry')
-        duration_chooser_container = glade_widgets.get_widget('duration_chooser_container')
-        self._duration_chooser = DurationChooser(Gtk.SizeGroup(Gtk.SizeGroupMode.HORIZONTAL))
-        self._command_entry = glade_widgets.get_widget('command_entry')
-        self._next_timer_entry = glade_widgets.get_widget('next_timer_entry')
-        self._auto_start_check = glade_widgets.get_widget('auto_start_check')
+        builder.add_from_file(GLADE_ADD_EDIT_PRESET_DIALOG)
+        self.dialog = builder.get_object('add_edit_preset_dialog')
+        self.ok_button = builder.get_object('ok_button')
+        self.cancel_button = builder.get_object('cancel_button')
+        self.name_entry = builder.get_object('name_entry')
+        duration_chooser_container = builder.get_object('duration_chooser_container')
+        self.duration_chooser = DurationChooser(Gtk.SizeGroup(Gtk.SizeGroupMode.HORIZONTAL))
+        self.command_entry = builder.get_object('command_entry')
+        self.next_timer_entry = builder.get_object('next_timer_entry')
+        self.auto_start_check = builder.get_object('auto_start_check')
         
-        duration_chooser_container.pack_start(self._duration_chooser, True, True, 0)
+        duration_chooser_container.pack_start(self.duration_chooser, True, True, 0)
         
-        self._dialog.set_title(title)
-        self._dialog.set_default_response(Gtk.ResponseType.OK)
-        self._name_entry.set_text(name)
-        self._command_entry.set_text(command)
-        self._duration_chooser.set_duration(hours, minutes, seconds)
-        self._next_timer_entry.set_text(next_timer)
-        self._auto_start_check.set_active(auto_start)
+        self.dialog.set_title(title)
+        self.dialog.set_default_response(Gtk.ResponseType.OK)
+        self.name_entry.set_text(name)
+        self.command_entry.set_text(command)
+        self.duration_chooser.set_duration(hours, minutes, seconds)
+        self.next_timer_entry.set_text(next_timer)
+        self.auto_start_check.set_active(auto_start)
         
-        self._name_entry.connect('changed', lambda entry: self._check_for_valid_save_preset_input())
-        self._duration_chooser.connect('duration-changed',
+        self.name_entry.connect('changed', lambda entry: self._check_for_valid_save_preset_input())
+        self.duration_chooser.connect('duration-changed',
                                        lambda chooser: self._check_for_valid_save_preset_input())
-        self._duration_chooser.show()
-    
+        self.duration_chooser.show()
+
     def _non_zero_duration(self):
-        (hours, minutes, seconds) = self._duration_chooser.get_duration()
+        (hours, minutes, seconds) = self.duration_chooser.get_duration()
         return (hours > 0 or minutes > 0 or seconds > 0)
         
     def _check_for_valid_save_preset_input(self):
-        self._ok_button.props.sensitive = (self._non_zero_duration() and 
-                                           self._valid_name_func(self._name_entry.get_text()))
+        self.ok_button.props.sensitive = (self._non_zero_duration() and 
+                                           self._valid_name_func(self.name_entry.get_text()))
 
     ## Callback for saving ##
 
     def get_preset(self):
         self._check_for_valid_save_preset_input()
-        result = self._dialog.run()
-        self._dialog.hide()
+        result = self.dialog.run()
+        self.dialog.hide()
         if result == Gtk.ResponseType.OK:
-            (hours, minutes, seconds) = self._duration_chooser.get_duration()
-            cmd = self._command_entry.get_text()
-            next_timer = self._next_timer_entry.get_text()
-            auto_start = self._auto_start_check.get_active()
-            return (self._name_entry.get_text(), hours, minutes, seconds, cmd,
+            (hours, minutes, seconds) = self.duration_chooser.get_duration()
+            cmd = self.command_entry.get_text()
+            next_timer = self.next_timer_entry.get_text()
+            auto_start = self.auto_start_check.get_active()
+            return (self.name_entry.get_text(), hours, minutes, seconds, cmd,
                     next_timer, auto_start)
         else:
             return None

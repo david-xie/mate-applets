@@ -1,6 +1,7 @@
 moduledir = $(pythondir)/timerapplet/ui
 module_PYTHON = \
 	__init__.py \
+	aboutdialog.py \
 	eddeditpresetdialog.py \
 	continuetimerdialog.py \
 	durationchooser.py \

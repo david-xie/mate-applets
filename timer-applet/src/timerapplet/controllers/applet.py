@@ -28,6 +28,7 @@ from gi.repository import Gtk
 from gi.repository import Gdk
 from timerapplet import utils
 from timerapplet import config
+from timerapplet.ui import AboutDialog
 from timerapplet.ui import StatusButton
 from timerapplet.ui import Notifier
 from timerapplet.ui import StartNextTimerDialog
@@ -93,19 +94,17 @@ class TimerApplet(object):
                             config.GLADE_PATH,
                             "Start next timer",
                             "Would you like to start the next timer?")
-        self.start_timer_dialog = StartTimerDialog(config.GLADE_PATH,
-                                                       lambda name: utils.is_valid_preset_name(name,
-                                                                                               self._presets_store),
-                                                       self.presets_store.get_model(),
-                                                       lambda row_iter: utils.get_preset_display_text(self._presets_store,
-                                                                                                      row_iter))
+        self.start_timer_dialog = StartTimerDialog(
+                                       lambda name: utils.is_valid_preset_name(name,
+                                                                               self._presets_store),
+                                       self.presets_store.get_model(),
+                                       lambda row_iter: utils.get_preset_display_text(self._presets_store,
+                                                                                      row_iter))
         self.continue_dialog = ContinueTimerDialog(_('Continue timer countdown?'),
                                                    _('The timer is currently paused. Would you like to continue countdown?'))
-        self.preferences_dialog = PreferencesDialog(config.GLADE_PATH)
+        self.preferences_dialog = PreferencesDialog()
 
-        builder = Gtk.Builder()
-        self.about_dialog = builder.add_objects_from_file(config.GLADE_PATH, 'about_dialog').get_object('about_dialog')
-        self.about_dialog.set_version(config.VERSION)
+        self.about_dialog = AboutDialog()
 
         # FIX ME: this needs to fix
         #self.applet.set_applet_flags(mateapplet.EXPAND_MINOR)
@@ -215,13 +214,13 @@ class TimerApplet(object):
             else:
                 # Timer finished at <time>
                 self.status_button.set_tooltip(_('Timer finished at %s.\nClick to stop timer.') % time_str)
-        
+
         self.status_button.set_sensitized(current_state == Timer.STATE_RUNNING or
                                            current_state == Timer.STATE_FINISHED)
         self.status_button.set_use_icon(current_state == Timer.STATE_IDLE)
         self.status_button.set_show_remaining_time(current_state != Timer.STATE_IDLE and
                 self.gsettings.get_bool(TimerApplet.KEY_SHOW_REMAINING_TIME))
-        
+
         if current_state == Timer.STATE_PAUSED:
             self.status_button.set_pie_fill_color(0.4, 0.4, 0.4)
         else:
@@ -231,17 +230,17 @@ class TimerApplet(object):
             green = color.green / 65535.0
             blue = color.blue / 65535.0
             self.status_button.set_pie_fill_color(red, green, blue)
-        
+
         orientation = self.applet.get_orient()
         size = self.applet.get_size()
         use_vertical = (orientation == mateapplet.ORIENT_LEFT or
                         orientation == mateapplet.ORIENT_RIGHT or
                         size >= mateapplet.SIZE_MEDIUM)
         self.status_button.set_use_vertical_layout(use_vertical)
-    
+
     def _update_popup_menu(self):
         popup = self.applet.get_popup_component()
-        
+
         timer_state = self.timer.get_state()
         has_next_timer = self.timer.get_next_timer()
         show_pause = (timer_state == Timer.STATE_RUNNING)
@@ -258,7 +257,7 @@ class TimerApplet(object):
                            # Only show this popup menu item if it has a
                            # next_timer defined. Clever, huh? ;)
                            has_next_timer)
-        
+
         show_presets_menu = (len(self.presets_store.get_model()) > 0)
         show_separator = (
             show_presets_menu or
@@ -267,7 +266,7 @@ class TimerApplet(object):
             show_continue or
             show_stop or
             show_restart)
-        
+
         to_hidden_str = lambda show: ('0', '1')[not show]
         popup.set_prop('/commands/PauseTimer', 'hidden', to_hidden_str(show_pause))
         popup.set_prop('/commands/ContinueTimer', 'hidden', to_hidden_str(show_continue))
@@ -282,7 +281,7 @@ class TimerApplet(object):
             popup.rm(TimerApplet.PRESETS_PLACEHOLDER_PATH)
         popup.set_translate(TimerApplet.PRESETS_PATH,
                             '<placeholder name="%s"/>' % TimerApplet.PRESETS_PLACEHOLDER_NAME)
-        
+
         preset_number = 1
         row_iter = self.presets_store.get_model().get_iter_first()
         while row_iter is not None:
@@ -295,7 +294,7 @@ class TimerApplet(object):
                            self._on_presets_submenu_item_activated,
                            self.presets_store.get_model().get_path(row_iter))
             row_iter = self.presets_store.get_model().iter_next(row_iter)
-    
+
     def _update_preferences_dialog(self):
         self.preferences_dialog.props.show_remaining_time = \
             self.gsettings.get_bool(TimerApplet.KEY_SHOW_REMAINING_TIME)
