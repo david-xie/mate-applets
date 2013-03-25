@@ -20,49 +20,31 @@ from gi.repository import Gio
 class TimerAppletSettings(object):
     connection_ids = []
 
-    def __init__(self, applet, gschema_path, standalone_key=None):
-        self.settings = Gio.Settings.new(gschema_path)
+    def __init__(self, gschema):
+        self.settings = Gio.Settings.new(gschema)
 
-    def add_notification(self, relative_key, callback, data=None):
-        """Register for notifications of changes to the given preference key.
-        
-        relative_key should be relative to the applet's base preferences key path.
-        callback should look like: callback(MateConfValue, data=None)
-        """
-        connection_id = self._client.notify_add(self._get_full_path(relative_key),
-                                                self._notification_callback, (callback, data))
-        self._connection_ids.append(connection_id)
+    def get_string(self, key):
+        return self.settings.get_string(key)
 
-    def get_string(self, relative_key):
-        return self._client.get_string(self._get_full_path(relative_key))
+    def get_boolean(self, key):
+        return self.settings.get_boolean(key)
 
-    def get_bool(self, relative_key):
-        return self._client.get_bool(self._get_full_path(relative_key))
+    def set_string(self, key, val):
+        self.settings.set_string(key, val)
 
-    def set_string(self, relative_key, val):
-        self._client.set_string(self._get_full_path(relative_key), val)
+    def set_boolean(self, key, val):
+        self.settings.set_boolean(key, val)
 
-    def set_bool(self, relative_key, val):
-        self._client.set_bool(self._get_full_path(relative_key), val)
+    def remove_all_notify(self):
+        for connection_id in self.connection_ids:
+            self.settings.disconnect(connection_id)
+        self.connection_ids = []
 
-    def delete(self):
-        for connection_id in self._connection_ids:
-            self._client.notify_remove(connection_id)
-        self._connection_ids = []
+    def add_notify(self, key, callback, args=None):
+        connection_id = self.settings.connect("changed::%s" % key, callback, args)
+        self.connection_ids.append(connection_id)
+        return connection_id
 
-    def _notification_callback(self, client, cnxn_id, entry, data=None):
-        (callback, real_data) = data
-
-        # mateconf_value is of type MateConfValue (mateconf.Value)
-        mateconf_value = entry.get_value()
-        
-        # Ignore when mateconf_value is None because that
-        # means that the settings are being removed
-        # because the applet has been removed from
-        # the panel.
-        if mateconf_value != None:
-            callback(mateconf_value, real_data)
-
-    def _get_full_path(self, relative_key):
-        return path.join(self._base_path, relative_key)
-
+    def remove_notify(self, connection_id):
+        self.connection_ids.pop(connection_id)
+        self.settings.disconnect(connection_id)

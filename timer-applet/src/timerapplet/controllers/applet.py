@@ -73,7 +73,7 @@ class TimerApplet(object):
 
     def __init__(self, presets_store, manage_presets_dialog, applet, timer, gsettings):
         self.presets_store = presets_store
-        self_manage_presets_dialog = manage_presets_dialog
+        self.manage_presets_dialog = manage_presets_dialog
         self.applet = applet
         self.timer = timer
         self.gsettings = gsettings
@@ -119,7 +119,7 @@ class TimerApplet(object):
                  ('StopTimer', None, None, None, None, lambda component, verb: self.timer.reset()),
                  ('RestartTimer', None, None, None, None, lambda component, verb: self._restart_timer()),
                  ('StartNextTimer', None, None, None, None, lambda component, verb: self._start_next_timer()),
-                 ('ManagePresets', None, None, None, None, lambda component, verb: self._manage_presets_dialog.show()),
+                 ('ManagePresets', None, None, None, None, lambda component, verb: self.manage_presets_dialog.show()),
                  ('Preferences', None, None, None, None, lambda component, verb: self.preferences_dialog.show()),
                  ('About', None, None, None, None, lambda component, verb: self.about_dialog.show())]
             )
@@ -186,17 +186,15 @@ class TimerApplet(object):
         self.preferences_dialog.connect('show-pulsing-icon-changed', self._on_prefs_show_pulsing_icon_changed)
         self.preferences_dialog.connect('custom-sound-path-changed', self._on_prefs_custom_sound_path_changed)
 
-        """
-        self.gsettings.add_notification(TimerApplet.KEY_SHOW_REMAINING_TIME, self._on_mateconf_changed)
-        self.gsettings.add_notification(TimerApplet.KEY_PLAY_SOUND, self._on_mateconf_changed)
-        self.gsettings.add_notification(TimerApplet.KEY_USE_CUSTOM_SOUND, self._on_mateconf_changed)
-        self.gsettings.add_notification(TimerApplet.KEY_SHOW_PULSING_ICON, self._on_mateconf_changed)
-        self.gsettings.add_notification(TimerApplet.KEY_SHOW_POPUP_NOTIFICATION, self._on_mateconf_changed)
-        self.gsettings.add_notification(TimerApplet.KEY_CUSTOM_SOUND_PATH, self._on_mateconf_changed)
-        """
+        self.gsettings.add_notify(TimerApplet.KEY_SHOW_REMAINING_TIME, self._on_mateconf_changed)
+        self.gsettings.add_notify(TimerApplet.KEY_PLAY_SOUND, self._on_mateconf_changed)
+        self.gsettings.add_notify(TimerApplet.KEY_USE_CUSTOM_SOUND, self._on_mateconf_changed)
+        self.gsettings.add_notify(TimerApplet.KEY_SHOW_PULSING_ICON, self._on_mateconf_changed)
+        self.gsettings.add_notify(TimerApplet.KEY_SHOW_POPUP_NOTIFICATION, self._on_mateconf_changed)
+        self.gsettings.add_notify(TimerApplet.KEY_CUSTOM_SOUND_PATH, self._on_mateconf_changed)
 
     ## Private methods for updating UI ##
-    
+
     def _update_status_button(self):
         current_state = self.timer.get_state()
         if current_state == Timer.STATE_IDLE:
@@ -226,7 +224,7 @@ class TimerApplet(object):
                                            current_state == Timer.STATE_FINISHED)
         self.status_button.set_use_icon(current_state == Timer.STATE_IDLE)
         self.status_button.set_show_remaining_time(current_state != Timer.STATE_IDLE and
-                self.gsettings.get_bool(TimerApplet.KEY_SHOW_REMAINING_TIME))
+                self.gsettings.get_boolean(TimerApplet.KEY_SHOW_REMAINING_TIME))
 
         if current_state == Timer.STATE_PAUSED:
             self.status_button.set_pie_fill_color(0.4, 0.4, 0.4)
@@ -304,15 +302,15 @@ class TimerApplet(object):
 
     def _update_preferences_dialog(self):
         self.preferences_dialog.props.show_remaining_time = \
-            self.gsettings.get_bool(TimerApplet.KEY_SHOW_REMAINING_TIME)
+            self.gsettings.get_boolean(TimerApplet.KEY_SHOW_REMAINING_TIME)
         self.preferences_dialog.props.play_sound = \
-            self.gsettings.get_bool(TimerApplet.KEY_PLAY_SOUND)
+            self.gsettings.get_boolean(TimerApplet.KEY_PLAY_SOUND)
         self.preferences_dialog.props.use_custom_sound = \
-            self.gsettings.get_bool(TimerApplet.KEY_USE_CUSTOM_SOUND)
+            self.gsettings.get_boolean(TimerApplet.KEY_USE_CUSTOM_SOUND)
         self.preferences_dialog.props.show_popup_notification = \
-            self.gsettings.get_bool(TimerApplet.KEY_SHOW_POPUP_NOTIFICATION)
+            self.gsettings.get_boolean(TimerApplet.KEY_SHOW_POPUP_NOTIFICATION)
         self.preferences_dialog.props.show_pulsing_icon = \
-            self.gsettings.get_bool(TimerApplet.KEY_SHOW_PULSING_ICON)
+            self.gsettings.get_boolean(TimerApplet.KEY_SHOW_PULSING_ICON)
         self.preferences_dialog.props.custom_sound_path = \
             self.gsettings.get_string(TimerApplet.KEY_CUSTOM_SOUND_PATH)
     
@@ -336,7 +334,7 @@ class TimerApplet(object):
         self._call_notify(show=False)
         if self.timer.get_state() != Timer.STATE_IDLE:
             self.timer.reset() # will stop timeout
-        self.gsettings.delete()
+        self.gsettings.remove_all_notify()
         
     ## Popup menu callbacks ##
         
@@ -357,24 +355,24 @@ class TimerApplet(object):
     ## PreferencesDialog callbacks ##
     
     def _on_prefs_show_time_changed(self, sender, show_time):
-        self.gsettings.set_bool(TimerApplet.KEY_SHOW_REMAINING_TIME,
+        self.gsettings.set_boolean(TimerApplet.KEY_SHOW_REMAINING_TIME,
                              show_time)
         
     def _on_prefs_play_sound_changed(self, sender, play_sound):
-        self.gsettings.set_bool(TimerApplet.KEY_PLAY_SOUND,
+        self.gsettings.set_boolean(TimerApplet.KEY_PLAY_SOUND,
                              play_sound)
         
     def _on_prefs_use_custom_sound_changed(self, sender, use_custom_sound):
-        self.gsettings.set_bool(TimerApplet.KEY_USE_CUSTOM_SOUND,
+        self.gsettings.set_boolean(TimerApplet.KEY_USE_CUSTOM_SOUND,
                              use_custom_sound)
     
     def _on_prefs_show_pulsing_icon_changed(self, sender, show_pulsing_icon):
-        self.gsettings.set_bool(TimerApplet.KEY_SHOW_PULSING_ICON, 
+        self.gsettings.set_boolean(TimerApplet.KEY_SHOW_PULSING_ICON, 
                              show_pulsing_icon)
 
     def _on_prefs_show_popup_notification_changed(self, sender,
                                                   show_popup_notification):
-        self.gsettings.set_bool(TimerApplet.KEY_SHOW_POPUP_NOTIFICATION,
+        self.gsettings.set_boolean(TimerApplet.KEY_SHOW_POPUP_NOTIFICATION,
                              show_popup_notification)
         
     def _on_prefs_custom_sound_path_changed(self, sender, custom_sound_path):
@@ -537,7 +535,7 @@ class TimerApplet(object):
                                        next_timer, auto_start)
     
     def _on_start_dialog_clicked_manage_presets(self, sender, data=None):
-        self._manage_presets_dialog.show()
+        self.manage_presets_dialog.show()
     
     def _on_start_dialog_clicked_save(self, sender, name,
                                       hours, minutes, seconds, command,
@@ -595,11 +593,11 @@ class TimerApplet(object):
                                         next_timer, auto_start)
 
     def _play_notification_sound(self):
-        if not self.gsettings.get_bool(TimerApplet.KEY_PLAY_SOUND):
+        if not self.gsettings.get_boolean(TimerApplet.KEY_PLAY_SOUND):
             return
             
         sound_path = config.DEFAULT_SOUND_PATH
-        if self.gsettings.get_bool(TimerApplet.KEY_USE_CUSTOM_SOUND):
+        if self.gsettings.get_boolean(TimerApplet.KEY_USE_CUSTOM_SOUND):
             sound_path = self.gsettings.get_string(TimerApplet.KEY_CUSTOM_SOUND_PATH)
             
         print 'Playing notification sound: "%s"' % str(sound_path)
@@ -628,7 +626,7 @@ class TimerApplet(object):
         self.gst_playbin.set_state(gst.STATE_NULL)
 
     def _start_pulsing_button(self):
-        if self.gsettings.get_bool(TimerApplet.KEY_SHOW_PULSING_ICON):
+        if self.gsettings.get_boolean(TimerApplet.KEY_SHOW_PULSING_ICON):
             self.status_button.start_pulsing()
 
     def _stop_pulsing_button(self):
@@ -640,7 +638,7 @@ class TimerApplet(object):
 
     def _call_notify(self, summary=None, message=None,
                      reminder_message_func=None, show=True):
-        if self.gsettings.get_bool(TimerApplet.KEY_SHOW_POPUP_NOTIFICATION):
+        if self.gsettings.get_boolean(TimerApplet.KEY_SHOW_POPUP_NOTIFICATION):
             if show:
                 self.notifier.begin(summary, message, reminder_message_func)
             else:
