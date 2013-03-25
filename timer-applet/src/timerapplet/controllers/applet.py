@@ -63,12 +63,12 @@ def force_no_focus_padding(widget):
 
 class TimerApplet(object):
     ## You can find Timer Applet's schemas file in data/timer-applet.schemas.in
-    KEY_SHOW_REMAINING_TIME = 'show_remaining_time'
-    KEY_PLAY_SOUND = 'play_notification_sound'
-    KEY_USE_CUSTOM_SOUND = 'use_custom_notification_sound'
-    KEY_SHOW_POPUP_NOTIFICATION = 'show_popup_notification'
-    KEY_SHOW_PULSING_ICON = 'show_pulsing_icon'
-    KEY_CUSTOM_SOUND_PATH = 'custom_notification_sound_path'
+    KEY_SHOW_REMAINING_TIME = 'show-remaining-time'
+    KEY_PLAY_SOUND = 'play-notification-sound'
+    KEY_USE_CUSTOM_SOUND = 'use-custom-notification-sound'
+    KEY_SHOW_POPUP_NOTIFICATION = 'show-popup-notification'
+    KEY_SHOW_PULSING_ICON = 'show-pulsing-icon'
+    KEY_CUSTOM_SOUND_PATH = 'custom-notification-sound-path'
 
     PRESETS_PATH = '/popups/popup/Presets'
     PRESETS_PLACEHOLDER_NAME = 'Placeholder'

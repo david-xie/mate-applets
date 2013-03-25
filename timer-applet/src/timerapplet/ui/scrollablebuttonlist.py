@@ -38,7 +38,7 @@ class ScrollableButtonList(Gtk.ScrolledWindow):
 
         self.set_vadjustment(self._vadjust)
         self.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
-        self._viewport.modify_bg(Gtk.StateType.NORMAL, self.style.base[Gtk.StateType.NORMAL])
+        #self._viewport.modify_bg(Gtk.StateType.NORMAL, self.style.base[Gtk.StateType.NORMAL])
 
         self._viewport.add(self._vbox)
         self.add(self._viewport)

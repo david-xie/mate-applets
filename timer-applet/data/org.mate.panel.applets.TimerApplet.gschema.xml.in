@@ -1,44 +1,44 @@
-<?xml version="1.0" encoding="UTF_8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <schemalist>
 	<schema id="org.mate.panel.applets.TimerApplet" path="/org/mate/panel/applets/TimerApplet/">
 
-		<key name="play_notification_sound" type="b">
+		<key name="play-notification-sound" type="b">
 			<default>false</default>
 			<summary>Play notification sound</summary>
 			<description>Play a notification sound when the timer finishes a countdown</description>
 		</key>
 
-		<key name="use_custom_notification_sound" type="b">
+		<key name="use-custom-notification-sound" type="b">
 			<default>false</default>
 			<summary>Use a custom notification sound</summary>
-			<description>Use the custom notification sound specified in custom_notification_sound_path</description>
+			<description>Use the custom notification sound specified in custom-notification-sound-path</description>
 		</key>
 
-		<key name="custom_notification_sound_path" type="s">
+		<key name="custom-notification-sound-path" type="s">
 			<default>''</default>
 			<summary>Path to a custom notification sound</summary>
 			<description>Path to a sound file that will be played when the timer finishes a countdown</description>
 		</key>
 
-		<key name="show_pulsing_icon" type="b">
+		<key name="show-pulsing-icon" type="b">
 			<default>true</default>
 			<summary>Show Pulsing icon</summary>
 			<description>Show pulsing tray icon when timer finished</description>
 		</key>
 
-		<key name="show_popup_notification" type="b">
+		<key name="show-popup-notification" type="b">
 			<default>true</default>
 			<summary>Show Popup notification</summary>
 			<description>Show Popup notification in the notification area</description>
 		</key>
 
-		<key name="show_remaining_time" type="b">
+		<key name="show-remaining-time" type="b">
 			<default>true</default>
 			<summary>Show remaining time</summary>
 			<description>Show the remaining time while the timer is running or paused</description>
 		</key>
 
-		<key name="play_beep" type="b">
+		<key name="play-beep" type="b">
 			<default>false</default>
 			<summary>Play a beep sound</summary>
 			<description>Play a beep sound on a computer's internal speaker when the timer finishes. This may not have an effect on all computers.</description>
