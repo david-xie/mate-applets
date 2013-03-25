@@ -24,3 +24,5 @@ class AboutDialog(object):
         builder.add_from_file(GLADE_ABOUT_DIALOG)
         self.dialog = builder.get_object('about_dialog')
         self.dialog.set_version(VERSION)
+        self.dialog.connect('delete-event', Gtk.Widget.hide_on_delete)
+        self.dialog.connect('response', lambda dialog, response_id: self.dialog.hide())

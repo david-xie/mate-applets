@@ -47,7 +47,7 @@ class StatusButton(PulseButton):
     def set_icon(self, image_path):
         self.label.set_from_pixbuf(GdkPixbuf.Pixbuf.new_from_file_at_size(image_path, -1, 20))
         #elf._icon_widget.set_from_file(image_path)
-        
+
     def set_use_icon(self, use_icon):
         if use_icon:
             self.pie_meter.hide()

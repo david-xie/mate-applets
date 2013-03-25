@@ -1,5 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?>	
-<Root>
+<?xml version="1.0" encoding="UTF-8"?>
+<ui>
   <popups>
     <popup name="button3">
       <menuitem verb="PauseTimer" name="Pause Item" _label="Pa_use"/>
@@ -15,5 +15,4 @@
       <menuitem verb="About" pixtype="stock" pixname="mate-stock-about" name="About Item" _label="_About"/>
     </popup>
   </popups>
-</Root>
-
+</ui>

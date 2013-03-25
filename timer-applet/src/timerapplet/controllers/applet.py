@@ -36,6 +36,7 @@ from timerapplet.ui import StartTimerDialog
 from timerapplet.ui import ContinueTimerDialog
 from timerapplet.ui import PreferencesDialog
 from timerapplet.core import Timer
+from timerapplet.core import TimerAppletSettings
 
 
 def on_widget_button_press_event(sender, event, data=None):
@@ -75,6 +76,7 @@ class TimerApplet(object):
         self_manage_presets_dialog = manage_presets_dialog
         self.applet = applet
         self.timer = timer
+        self.gsettings = gsettings
 
         self.gst_playbin = gst.element_factory_make('playbin', 'player')
         def bus_event(bus, message):
@@ -110,16 +112,20 @@ class TimerApplet(object):
 
         # FIX ME: need a Gtk.ActionGroup here!
         # Learn how to add an ActionGroup
+        action_group = Gtk.ActionGroup("applet_actions")
+        action_group.add_actions(
+                [('PauseTimer', None, None, None, None, lambda component, verb: self.timer.stop()),
+                 ('ContinueTimer', None, None, None, None, lambda component, verb: self.timer.start()),
+                 ('StopTimer', None, None, None, None, lambda component, verb: self.timer.reset()),
+                 ('RestartTimer', None, None, None, None, lambda component, verb: self._restart_timer()),
+                 ('StartNextTimer', None, None, None, None, lambda component, verb: self._start_next_timer()),
+                 ('ManagePresets', None, None, None, None, lambda component, verb: self._manage_presets_dialog.show()),
+                 ('Preferences', None, None, None, None, lambda component, verb: self.preferences_dialog.show()),
+                 ('About', None, None, None, None, lambda component, verb: self.about_dialog.show())]
+            )
         self.applet.setup_menu_from_file(
             config.POPUP_MENU_FILE_PATH,
-            [('PauseTimer', lambda component, verb: self.timer.stop()),
-             ('ContinueTimer', lambda component, verb: self.timer.start()),
-             ('StopTimer', lambda component, verb: self.timer.reset()),
-             ('RestartTimer', lambda component, verb: self._restart_timer()),
-             ('StartNextTimer', lambda component, verb: self._start_next_timer()),
-             ('ManagePresets', lambda component, verb: self._manage_presets_dialog.show()),
-             ('Preferences', lambda component, verb: self.preferences_dialog.show()),
-             ('About', lambda component, verb: self.about_dialog.show())]
+            action_group
         )
         self.applet.add(self.status_button)
 
@@ -132,14 +138,14 @@ class TimerApplet(object):
         self.status_button.connect('button-press-event', on_widget_button_press_event)
 
         self.status_button.set_relief(Gtk.ReliefStyle.NONE)
-        self.status_button.set_icon(config.ICON_PATH);
+        #self.status_button.set_icon(config.ICON_PATH);
 
         self.applet.set_tooltip_text(_("Timer Applet"))
 
         self._connect_signals()
-        self._update_status_button()
-        self._update_popup_menu()
-        self._update_preferences_dialog()
+        #self._update_status_button()
+        #self._update_popup_menu()
+        #self._update_preferences_dialog()
         self.status_button.show()
         self.applet.show()
 
@@ -149,6 +155,7 @@ class TimerApplet(object):
         self.applet.connect('change-background', self._on_applet_change_background)
         self.applet.connect('destroy', self._on_applet_destroy)
 
+        """
         self.presets_store.get_model().connect('row-deleted', 
                                                 lambda model,
                                                 row_path: self._update_popup_menu())
@@ -156,6 +163,7 @@ class TimerApplet(object):
                                                 lambda model,
                                                 row_path,
                                                 row_iter: self._update_popup_menu())
+        """
 
         self.timer.connect('time-changed', self._on_timer_time_changed)
         self.timer.connect('state-changed', self._on_timer_state_changed)
@@ -170,24 +178,23 @@ class TimerApplet(object):
                                          self._on_start_dialog_clicked_preset)
         self.start_timer_dialog.connect('double-clicked-preset',
                                          self._on_start_dialog_double_clicked_preset)
-        
+
         self.preferences_dialog.connect('show-remaining-time-changed', self._on_prefs_show_time_changed)
         self.preferences_dialog.connect('play-sound-changed', self._on_prefs_play_sound_changed)
         self.preferences_dialog.connect('use-custom-sound-changed', self._on_prefs_use_custom_sound_changed)
         self.preferences_dialog.connect('show-popup-notification-changed', self._on_prefs_show_popup_notification_changed)
         self.preferences_dialog.connect('show-pulsing-icon-changed', self._on_prefs_show_pulsing_icon_changed)
         self.preferences_dialog.connect('custom-sound-path-changed', self._on_prefs_custom_sound_path_changed)
-        
-        self.about_dialog.connect('delete-event', Gtk.Widget.hide_on_delete)
-        self.about_dialog.connect('response', lambda dialog, response_id: self.about_dialog.hide())
 
+        """
         self.gsettings.add_notification(TimerApplet.KEY_SHOW_REMAINING_TIME, self._on_mateconf_changed)
         self.gsettings.add_notification(TimerApplet.KEY_PLAY_SOUND, self._on_mateconf_changed)
         self.gsettings.add_notification(TimerApplet.KEY_USE_CUSTOM_SOUND, self._on_mateconf_changed)
         self.gsettings.add_notification(TimerApplet.KEY_SHOW_PULSING_ICON, self._on_mateconf_changed)
         self.gsettings.add_notification(TimerApplet.KEY_SHOW_POPUP_NOTIFICATION, self._on_mateconf_changed)
         self.gsettings.add_notification(TimerApplet.KEY_CUSTOM_SOUND_PATH, self._on_mateconf_changed)
-    
+        """
+
     ## Private methods for updating UI ##
     
     def _update_status_button(self):
@@ -315,7 +322,7 @@ class TimerApplet(object):
         applet.set_style(None)
         rc_style = Gtk.RcStyle()
         applet.modify_style(rc_style)
-        
+
         if background_type == mateapplet.NO_BACKGROUND:
             pass
         elif background_type == mateapplet.COLOR_BACKGROUND:

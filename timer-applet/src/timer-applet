@@ -83,7 +83,7 @@ def applet_factory(applet, iid, data):
                 global_controller.manage_presets_dialog,
                 applet,
                 timer,
-                None)
+                TimerAppletSettings(applet, config.GSCHEMA_PATH))
 
     timer_obj_path = path.join(DBUS_OBJ_NAMESPACE, 'Timers', timer_id)
     print 'Timer D-Bus object path: %s' % timer_obj_path

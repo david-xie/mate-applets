@@ -20,8 +20,8 @@ from gi.repository import Gio
 class TimerAppletSettings(object):
     connection_ids = []
 
-    def __init__(self, applet, schema_path, standalone_key):
-        self.settings = Gio.Settings.new(schema_path)
+    def __init__(self, applet, gschema_path, standalone_key=None):
+        self.settings = Gio.Settings.new(gschema_path)
 
     def add_notification(self, relative_key, callback, data=None):
         """Register for notifications of changes to the given preference key.
