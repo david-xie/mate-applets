@@ -18,14 +18,30 @@ gi.require_version("Gtk", "2.0")
 
 from gi.repository import Gtk
 
+from gettext import gettext as _
 from timerapplet.config import VERSION
+from timerapplet.config import ICON_PATH
 from timerapplet.config import GLADE_ABOUT_DIALOG
+
+properties = {
+        "program-name" : _("TimerApplet"),
+        "version" : VERSION,
+        "comments" : _("Test"),
+        "copyright" : "sdgasg"
+    }
 
 class AboutDialog(object):
     def __init__(self):
-        builder = Gtk.Builder()
-        builder.add_from_file(GLADE_ABOUT_DIALOG)
-        self.dialog = builder.get_object('about_dialog')
+        self.dialog = Gtk.AboutDialog()
+        try:
+            properties['logo'] = GdkPixbuf.Pixbuf.new_from_file_at_size(join(mate_invest.ART_DATA_DIR, "invest_neutral.svg"), 96, 96)
+        except Exception, msg:
+            pass
         self.dialog.set_version(VERSION)
         self.dialog.connect('delete-event', Gtk.Widget.hide_on_delete)
-        self.dialog.connect('response', lambda dialog, response_id: self.dialog.hide())
+        self.dialog.connect('response', lambda self, *args: self.destroy ())
+        for key, value in properties.items():
+            self.dialog.set_property(key, value)
+
+    def show(self):
+        self.dialog.show_all()

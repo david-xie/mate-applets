@@ -63,7 +63,7 @@ class StartTimerDialog(GObject.GObject):
         self._valid_name_func = name_validator_func;
         self.presets_store = presets_store
         self._preset_display_func = preset_display_func
-        
+
         self.presets_list = ScrollableButtonList()
         labels_size_group = Gtk.SizeGroup(Gtk.SizeGroupMode.HORIZONTAL)
         self.duration_chooser = DurationChooser(labels_size_group)
@@ -88,12 +88,12 @@ class StartTimerDialog(GObject.GObject):
         self.next_timer_combo.set_text_column(0) # The column to be shown
         #: The auto-start check button.
         self.auto_start_check = builder.get_object('auto_start_check')
-        
+
         labels_size_group.add_widget(name_label)
         self.dialog.set_default_response(Gtk.ResponseType.OK)
         duration_chooser_container.pack_start(self.duration_chooser, True, True, 0)
         presets_chooser_container.pack_start(self.presets_list, True, True, 0)
-        
+
         self.dialog.connect('response', self._on_dialog_response)
         self.dialog.connect('delete-event', self.dialog.hide_on_delete)
         self.dialog.add_events(Gdk.EventMask.BUTTON_PRESS_MASK)

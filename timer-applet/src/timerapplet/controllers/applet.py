@@ -44,7 +44,7 @@ from timerapplet.core import TimerAppletSettings
 
 def on_widget_button_press_event(sender, event, data=None):
     if event.button != 1:
-        sender.emit_stop_by_name('button-press-event')  
+        sender.stop_emission_by_name('button-press-event')
     return False
 
 
@@ -117,14 +117,14 @@ class TimerApplet(object):
         # Learn how to add an ActionGroup
         action_group = Gtk.ActionGroup("applet_actions")
         action_group.add_actions(
-                [('PauseTimer', None, None, None, None, lambda component, verb: self.timer.stop()),
-                 ('ContinueTimer', None, None, None, None, lambda component, verb: self.timer.start()),
+                [('PauseTimer', Gtk.STOCK_HELP, None, None, None, lambda component, verb: self.timer.stop()),
+                 ('ContinueTimer', Gtk.STOCK_HELP, None, None, None, lambda component, verb: self.timer.start()),
                  ('StopTimer', None, None, None, None, lambda component, verb: self.timer.reset()),
                  ('RestartTimer', None, None, None, None, lambda component, verb: self._restart_timer()),
                  ('StartNextTimer', None, None, None, None, lambda component, verb: self._start_next_timer()),
                  ('ManagePresets', None, None, None, None, lambda component, verb: self.manage_presets_dialog.show()),
                  ('Preferences', None, None, None, None, lambda component, verb: self.preferences_dialog.show()),
-                 ('About', None, None, None, None, lambda component, verb: self.about_dialog.show())]
+                 ('About', Gtk.STOCK_HELP, _("About"), None, None, lambda component, verb: self.about_dialog.show())]
             )
         self.applet.setup_menu_from_file(
             config.POPUP_MENU_FILE_PATH,
@@ -150,7 +150,7 @@ class TimerApplet(object):
         #self._update_popup_menu()
         #self._update_preferences_dialog()
         self.status_button.show()
-        self.applet.show()
+        self.applet.show_all()
 
     def _connect_signals(self):
         self.applet.connect('change-orient', lambda applet, orientation: self._update_status_button())
@@ -241,9 +241,10 @@ class TimerApplet(object):
 
         orientation = self.applet.get_orient()
         size = self.applet.get_size()
-        use_vertical = (orientation == mateapplet.ORIENT_LEFT or
-                        orientation == mateapplet.ORIENT_RIGHT or
-                        size >= mateapplet.SIZE_MEDIUM)
+        # FIX ME: I lost size here. should have size >= mateapplet.SIZE_MEDIUM,
+        # but I can't find it in any MatePanelApplet
+        use_vertical = (orientation == MatePanelApplet.AppletOrient.ORIENT_LEFT or
+                        orientation == MatePanelApplet.AppletOrient.ORIENT_RIGHT)
         self.status_button.set_use_vertical_layout(use_vertical)
 
     def _update_popup_menu(self):
@@ -283,7 +284,7 @@ class TimerApplet(object):
         popup.set_prop('/commands/StartNextTimer', 'hidden', to_hidden_str(show_next_timer))
         popup.set_prop(TimerApplet.PRESETS_PATH, 'hidden', to_hidden_str(show_presets_menu))
         popup.set_prop('/popups/popup/Separator1', 'hidden', to_hidden_str(show_separator))
-        
+
         # Rebuild the Presets submenu
         if popup.path_exists(TimerApplet.PRESETS_PLACEHOLDER_PATH):
             popup.rm(TimerApplet.PRESETS_PLACEHOLDER_PATH)
@@ -324,11 +325,11 @@ class TimerApplet(object):
         rc_style = Gtk.RcStyle()
         applet.modify_style(rc_style)
 
-        if background_type == mateapplet.NO_BACKGROUND:
+        if background_type == MatePanelApplet.AppletBackgroundType.NO_BACKGROUND:
             pass
-        elif background_type == mateapplet.COLOR_BACKGROUND:
+        elif background_type == MatePanelApplet.AppletBackgroundType.COLOR_BACKGROUND:
             applet.modify_bg(Gtk.StateType.NORMAL, color)
-        elif background_type == mateapplet.PIXMAP_BACKGROUND:
+        elif background_type == MatePanelApplet.AppletBackgroundType.PIXMAP_BACKGROUND:
             style = applet.style.copy()
             style.bg_pixmap[Gtk.StateType.NORMAL] = pixmap
             applet.set_style(style)
