@@ -31,17 +31,13 @@ properties = {
     }
 
 class AboutDialog(object):
-    def __init__(self):
-        self.dialog = Gtk.AboutDialog()
+    def show(self):
+        dialog = Gtk.AboutDialog()
         try:
             properties['logo'] = GdkPixbuf.Pixbuf.new_from_file_at_size(join(mate_invest.ART_DATA_DIR, "invest_neutral.svg"), 96, 96)
         except Exception, msg:
             pass
-        self.dialog.set_version(VERSION)
-        self.dialog.connect('delete-event', Gtk.Widget.hide_on_delete)
-        self.dialog.connect('response', lambda self, *args: self.destroy())
+        dialog.connect('response', lambda self, *args: self.destroy())
         for key, value in properties.items():
-            self.dialog.set_property(key, value)
-
-    def show(self):
-        self.dialog.show_all()
+            dialog.set_property(key, value)
+        dialog.show_all()
