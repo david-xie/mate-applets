@@ -39,7 +39,7 @@ class AboutDialog(object):
             pass
         self.dialog.set_version(VERSION)
         self.dialog.connect('delete-event', Gtk.Widget.hide_on_delete)
-        self.dialog.connect('response', lambda self, *args: self.destroy ())
+        self.dialog.connect('response', lambda self, *args: self.destroy())
         for key, value in properties.items():
             self.dialog.set_property(key, value)
 

@@ -44,7 +44,7 @@ from timerapplet.core import TimerAppletSettings
 
 def on_widget_button_press_event(sender, event, data=None):
     if event.button != 1:
-        sender.stop_emission_by_name('button-press-event')
+        sender.stop_emission('button-press-event')
     return False
 
 
@@ -117,14 +117,14 @@ class TimerApplet(object):
         # Learn how to add an ActionGroup
         action_group = Gtk.ActionGroup("applet_actions")
         action_group.add_actions(
-                [('PauseTimer', Gtk.STOCK_HELP, None, None, None, lambda component, verb: self.timer.stop()),
-                 ('ContinueTimer', Gtk.STOCK_HELP, None, None, None, lambda component, verb: self.timer.start()),
-                 ('StopTimer', None, None, None, None, lambda component, verb: self.timer.reset()),
-                 ('RestartTimer', None, None, None, None, lambda component, verb: self._restart_timer()),
-                 ('StartNextTimer', None, None, None, None, lambda component, verb: self._start_next_timer()),
-                 ('ManagePresets', None, None, None, None, lambda component, verb: self.manage_presets_dialog.show()),
-                 ('Preferences', None, None, None, None, lambda component, verb: self.preferences_dialog.show()),
-                 ('About', Gtk.STOCK_HELP, _("About"), None, None, lambda component, verb: self.about_dialog.show())]
+                [('PauseTimer', Gtk.STOCK_MEDIA_PAUSE, _("PauseTimer"), None, None, lambda action: self.timer.stop()),
+                 ('ContinueTimer', Gtk.STOCK_MEDIA_PLAY, _("ContinueTimer"), None, None, lambda action: self.timer.start()),
+                 ('StopTimer', Gtk.STOCK_MEDIA_STOP, _("StopTimer"), None, None, lambda action: self.timer.reset()),
+                 ('RestartTimer', Gtk.STOCK_REFRESH, _("RestartTimer"), None, None, lambda action: self._restart_timer()),
+                 ('StartNextTimer', Gtk.STOCK_MEDIA_NEXT, _("StartNextTimer"), None, None, lambda action: self._start_next_timer()),
+                 ('ManagePresets', Gtk.STOCK_INFO, _("ManagePresets"), None, None, lambda action: self.manage_presets_dialog.show()),
+                 ('Preferences', Gtk.STOCK_PREFERENCES, _("Preferences"), None, None, lambda action: self.preferences_dialog.show()),
+                 ('About', Gtk.STOCK_ABOUT, _("About"), None, None, lambda action: self.about_dialog.show())]
             )
         self.applet.setup_menu_from_file(
             config.POPUP_MENU_FILE_PATH,
