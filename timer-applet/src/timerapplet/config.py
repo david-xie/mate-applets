@@ -14,8 +14,8 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-
 import os.path as path
+from xdg import BaseDirectory
 
 try:
     from defs import *
@@ -41,5 +41,5 @@ GLADE_ADD_EDIT_PRESET_DIALOG = path.join(RESOURCES_DIR, 'glades/add-edit-preset-
 POPUP_MENU_FILE_PATH = path.join(RESOURCES_DIR, 'TimerApplet.xml')
 GSCHEMA = 'org.mate.panel.applets.TimerApplet'
 ICON_PATH = path.join(IMAGES_DIR, 'timer-applet.png')
-PRESETS_PATH = path.expanduser('~/.config/mate/timer-applet/presets.xml')
+PRESETS_PATH = path.join(BaseDirectory.xdg_config_home, 'mate/timer-applet/presets.xml')
 DEFAULT_SOUND_PATH = '/usr/share/sounds/gtk-events/clicked.wav'
