@@ -106,6 +106,7 @@ class TimerApplet(object):
                                                                                       row_iter))
         self.continue_dialog = ContinueTimerDialog(_('Continue timer countdown?'),
                                                    _('The timer is currently paused. Would you like to continue countdown?'))
+
         self.preferences_dialog = PreferencesDialog()
 
         self.about_dialog = AboutDialog()

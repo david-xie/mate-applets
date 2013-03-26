@@ -23,45 +23,44 @@ from timerapplet.config import GLADE_PREFERENCES_DIALOG
 
 
 class PreferencesDialog(GObject.GObject):
-    __gsignals__ = \
-    {
-        'show-remaining-time-changed': 
-        (
-            GObject.SignalFlags.RUN_LAST,
-            None,
-            (GObject.TYPE_BOOLEAN,)
-        ),
-        'play-sound-changed':
-        (
-            GObject.SignalFlags.RUN_LAST,
-            None,
-            (GObject.TYPE_BOOLEAN,)
-        ),
-        'use-custom-sound-changed':
-        (
-            GObject.SignalFlags.RUN_LAST,
-            None,
-            (GObject.TYPE_BOOLEAN,)
-        ),
-        'show-popup-notification-changed':
-        (
-            GObject.SignalFlags.RUN_LAST,
-            None,
-            (GObject.TYPE_BOOLEAN,)
-        ),
-        'show-pulsing-icon-changed':
-        (
-            GObject.SignalFlags.RUN_LAST,
-            None,
-            (GObject.TYPE_BOOLEAN,)
-        ),
-        'custom-sound-path-changed':
-        (
-            GObject.SignalFlags.RUN_LAST,
-            None,
-            (GObject.TYPE_STRING,)
-        )
-    }
+    __gsignals__ = {
+                'show-remaining-time-changed': 
+                (
+                    GObject.SignalFlags.RUN_LAST,
+                    None,
+                    (GObject.TYPE_BOOLEAN,)
+                ),
+                'play-sound-changed':
+                (
+                    GObject.SignalFlags.RUN_LAST,
+                    None,
+                    (GObject.TYPE_BOOLEAN,)
+                ),
+                'use-custom-sound-changed':
+                (
+                    GObject.SignalFlags.RUN_LAST,
+                    None,
+                    (GObject.TYPE_BOOLEAN,)
+                ),
+                'show-popup-notification-changed':
+                (
+                    GObject.SignalFlags.RUN_LAST,
+                    None,
+                    (GObject.TYPE_BOOLEAN,)
+                ),
+                'show-pulsing-icon-changed':
+                (
+                    GObject.SignalFlags.RUN_LAST,
+                    None,
+                    (GObject.TYPE_BOOLEAN,)
+                ),
+                'custom-sound-path-changed':
+                (
+                    GObject.SignalFlags.RUN_LAST,
+                    None,
+                    (GObject.TYPE_STRING,)
+                )
+            }
 
     __gproperties__ = \
     {
@@ -108,7 +107,7 @@ class PreferencesDialog(GObject.GObject):
          GObject.PARAM_WRITABLE
         )
     }
-                        
+
     def __init__(self):
         GObject.GObject.__init__(self)
         builder = Gtk.Builder()
@@ -124,6 +123,8 @@ class PreferencesDialog(GObject.GObject):
         self.popup_notification_check = builder.get_object('popup_notification_check')
         #: Pulsing icon checkbutton
         self.pulsing_icon_check = builder.get_object('pulsing_trayicon_check')
+        close_button = builder.get_object("close_button")
+        close_button.connect("clicked", lambda action: self.preferences_dialog.hide_on_delete())
 
         #######################################################################
         # Signals
@@ -135,10 +136,10 @@ class PreferencesDialog(GObject.GObject):
         self.popup_notification_check.connect('toggled', self._on_popup_notification_toggled)
         #: Pulsing icon checkbutton 'toggled' signal
         self.pulsing_icon_check.connect('toggled', self._on_pulsing_icon_toggled)
-        
+
         self.sound_chooser_button.connect('selection-changed', self._on_sound_chooser_button_selection_changed)
         self.preferences_dialog.connect('delete-event', Gtk.Widget.hide_on_delete)
-        self.preferences_dialog.connect('response', lambda dialog, response_id: self.preferences_dialog.hide())
+        self.preferences_dialog.connect('response', lambda self, *args: self.hide())
 
     def show(self):
         self.preferences_dialog.present()
