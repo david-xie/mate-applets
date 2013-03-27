@@ -31,16 +31,18 @@ class AddEditPresetDialog(object):
         builder.add_from_file(GLADE_ADD_EDIT_PRESET_DIALOG)
         self.dialog = builder.get_object('add_edit_preset_dialog')
         self.ok_button = builder.get_object('ok_button')
-        self.cancel_button = builder.get_object('cancel_button')
+        cancel_button = builder.get_object('cancel_button')
+        cancel_button.connect("clicked", lambda action: self.dialog.hide_on_delete())
+
         self.name_entry = builder.get_object('name_entry')
         duration_chooser_container = builder.get_object('duration_chooser_container')
         self.duration_chooser = DurationChooser(Gtk.SizeGroup(Gtk.SizeGroupMode.HORIZONTAL))
         self.command_entry = builder.get_object('command_entry')
         self.next_timer_entry = builder.get_object('next_timer_entry')
         self.auto_start_check = builder.get_object('auto_start_check')
-        
+
         duration_chooser_container.pack_start(self.duration_chooser, True, True, 0)
-        
+
         self.dialog.set_title(title)
         self.dialog.set_default_response(Gtk.ResponseType.OK)
         self.name_entry.set_text(name)
@@ -48,7 +50,7 @@ class AddEditPresetDialog(object):
         self.duration_chooser.set_duration(hours, minutes, seconds)
         self.next_timer_entry.set_text(next_timer)
         self.auto_start_check.set_active(auto_start)
-        
+
         self.name_entry.connect('changed', lambda entry: self._check_for_valid_save_preset_input())
         self.duration_chooser.connect('duration-changed',
                                        lambda chooser: self._check_for_valid_save_preset_input())
@@ -57,7 +59,7 @@ class AddEditPresetDialog(object):
     def _non_zero_duration(self):
         (hours, minutes, seconds) = self.duration_chooser.get_duration()
         return (hours > 0 or minutes > 0 or seconds > 0)
-        
+
     def _check_for_valid_save_preset_input(self):
         self.ok_button.props.sensitive = (self._non_zero_duration() and 
                                            self._valid_name_func(self.name_entry.get_text()))
