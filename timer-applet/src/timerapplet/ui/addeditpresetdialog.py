@@ -29,17 +29,17 @@ class AddEditPresetDialog(object):
 
         builder = Gtk.Builder()
         builder.add_from_file(GLADE_ADD_EDIT_PRESET_DIALOG)
-        self.dialog = builder.get_object('add_edit_preset_dialog')
-        self.ok_button = builder.get_object('ok_button')
-        cancel_button = builder.get_object('cancel_button')
+        self.dialog = builder.get_object('add-edit-preset-dialog')
+        self.ok_button = builder.get_object('ok-button')
+        cancel_button = builder.get_object('cancel-button')
         cancel_button.connect("clicked", lambda action: self.dialog.hide_on_delete())
 
-        self.name_entry = builder.get_object('name_entry')
-        duration_chooser_container = builder.get_object('duration_chooser_container')
+        self.name_entry = builder.get_object('name-entry')
+        duration_chooser_container = builder.get_object('duration-chooser-container')
         self.duration_chooser = DurationChooser(Gtk.SizeGroup(Gtk.SizeGroupMode.HORIZONTAL))
-        self.command_entry = builder.get_object('command_entry')
-        self.next_timer_entry = builder.get_object('next_timer_entry')
-        self.auto_start_check = builder.get_object('auto_start_check')
+        self.command_entry = builder.get_object('command-entry')
+        self.next_timer_entry = builder.get_object('next-timer-entry')
+        self.auto_start_check = builder.get_object('auto-start-check')
 
         duration_chooser_container.pack_start(self.duration_chooser, True, True, 0)
 

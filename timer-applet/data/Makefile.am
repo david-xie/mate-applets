@@ -11,15 +11,13 @@ schemasdir = /usr/share/glib-2.0/schemas/
 schemas_in_files = org.mate.panel.applets.TimerApplet.gschema.xml.in
 schemas_DATA = $(schemas_in_files:.xml.in=.xml)
 
-pkgdata_DATA = \
-	TimerApplet.xml \
-	timer-applet.glade
+pkgdata_DATA = TimerApplet.xml
 
 EXTRA_DIST = \
 	TimerApplet.server.in.in \
 	$(pkgdata_DATA) \
 	$(schemas_in_files)
-	
+
 CLEANFILES = \
 	$(server_DATA) \
 	$(server_in_files) \
