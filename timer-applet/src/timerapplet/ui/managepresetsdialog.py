@@ -39,6 +39,9 @@ class ManagePresetsDialog(GObject.GObject):
         self.edit_button = builder.get_object('edit_button')
         self.add_button = builder.get_object('add_button')
 
+        cancel_button = builder.get_object("close_button")
+        cancel_button.connect("clicked", lambda action: self.dialog.hide_on_delete())
+
         self.presets_view.set_model(presets_store)
         renderer = Gtk.CellRendererText()
         col = Gtk.TreeViewColumn('Preset', renderer)
