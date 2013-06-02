@@ -2,7 +2,6 @@ moduledir = $(pythondir)/timerapplet/controllers
 module_PYTHON = \
 	__init__.py \
 	globalcontroller.py \
-	timerapplet.py \
+	applet.py \
 	timermanagerService.py \
 	timerservice.py
-
